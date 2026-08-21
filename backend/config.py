@@ -8,6 +8,10 @@ load_dotenv(override=True)
 def _bool(name, default="false"):
     return os.getenv(name, default).strip().lower() in ("1", "true", "yes", "on")
 
+def _int(name, default="0"):
+    val = os.getenv(name, default).strip()
+    return int(val) if val else int(default)
+
 
 class Config:
     DEBUG = _bool("FLASK_DEBUG", "false")
@@ -16,7 +20,7 @@ class Config:
     # --- Secrets (override in .env; never commit real values) ---
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-jwt-secret-change-me")
-    JWT_EXPIRES_HOURS = int(os.getenv("JWT_EXPIRES_HOURS", "24"))
+    JWT_EXPIRES_HOURS = _int("JWT_EXPIRES_HOURS", "24")
 
     # --- Database ---
     SQLALCHEMY_DATABASE_URI = os.getenv(
@@ -37,7 +41,7 @@ class Config:
     RATELIMIT_STORAGE_URI = os.getenv("RATELIMIT_STORAGE_URI", "memory://")
 
     MAIL_SERVER = os.getenv("MAIL_SERVER")
-    MAIL_PORT = int(os.getenv("MAIL_PORT", "587"))
+    MAIL_PORT = _int("MAIL_PORT", "587")
     MAIL_USE_TLS = _bool("MAIL_USE_TLS", "true")
     MAIL_USERNAME = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")

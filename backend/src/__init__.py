@@ -35,11 +35,8 @@ def create_app():
     # Create app
     app = Flask(__name__)
 
-    try:
-        app.config.from_object(Config)
-        logging.info("Configuration Success")
-    except Exception as e:
-        logging.error(f"Configuration Failed, {e}")
+    app.config.from_object(Config)
+    logging.info("Configuration Success")
 
     # Handling CORS (allowlist from config; "*" allows all).
     # The SPA authenticates with a Bearer token in localStorage (no cookies),
