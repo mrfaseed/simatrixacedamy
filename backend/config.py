@@ -23,10 +23,14 @@ class Config:
     JWT_EXPIRES_HOURS = _int("JWT_EXPIRES_HOURS", "24")
 
     # --- Database ---
-    SQLALCHEMY_DATABASE_URI = os.getenv(
+    _db_url = os.getenv(
         "DATABASE_URL",
         "mysql+pymysql://root:Kavi%40123@localhost/simatrix_db",
     )
+    if _db_url.startswith("mysql://"):
+        _db_url = _db_url.replace("mysql://", "mysql+pymysql://", 1)
+        
+    SQLALCHEMY_DATABASE_URI = _db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*")
