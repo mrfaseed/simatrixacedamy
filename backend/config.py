@@ -30,6 +30,13 @@ class Config:
     if _db_url.startswith("mysql://"):
         _db_url = _db_url.replace("mysql://", "mysql+pymysql://", 1)
         
+    # TiDB Serverless requires secure connections
+    if "tidbcloud.com" in _db_url:
+        if "?" not in _db_url:
+            _db_url += "?ssl_verify_cert=true&ssl_verify_identity=true"
+        elif "ssl_verify_cert" not in _db_url:
+            _db_url += "&ssl_verify_cert=true&ssl_verify_identity=true"
+
     SQLALCHEMY_DATABASE_URI = _db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
