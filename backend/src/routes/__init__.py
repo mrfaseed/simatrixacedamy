@@ -16,7 +16,8 @@ def init_routes(app):
     def seed_db_render():
         import subprocess
         try:
-            result = subprocess.run(["python", "src/seed.py"], capture_output=True, text=True)
+            # Using -m src.seed ensures Python finds the 'src' module in the path
+            result = subprocess.run(["python", "-m", "src.seed"], capture_output=True, text=True)
             return {"status": 1, "message": "Seed triggered", "stdout": result.stdout, "stderr": result.stderr}
         except Exception as e:
             return {"status": 0, "error": str(e)}
