@@ -94,6 +94,9 @@ def create_app():
     logging.info("Routes Initialized Successfully.")
 
     with app.app_context():
-        db.create_all()
+        try:
+            db.create_all()
+        except Exception as e:
+            logging.warning(f"Ignoring db.create_all() error (often caused by concurrent workers): {e}")
 
     return app
