@@ -36,6 +36,11 @@ def create_app():
     app = Flask(__name__)
 
     app.config.from_object(Config)
+    
+    print("CONFIG KEYS:", list(app.config.keys()))
+    if 'SQLALCHEMY_DATABASE_URI' not in app.config:
+        print("MISSING! Config class dict:", Config.__dict__.keys())
+
     logging.info("Configuration Success")
 
     # Handling CORS (allowlist from config; "*" allows all).
@@ -51,53 +56,42 @@ def create_app():
     CORS(app, resources={r"/*": {"origins": origins}})
 
     # Rate limiting + email
-    try:
-        limiter.init_app(app)
-        mail.init_app(app)
-        logging.info("Extensions (limiter, mail) Initialized.")
-    except Exception as e:
-        logging.error(f"Extensions Initialize Failed, {e}")
+    limiter.init_app(app)
+    mail.init_app(app)
+    logging.info("Extensions (limiter, mail) Initialized.")
 
     # Connect the db to app
-    try:
-        db.init_app(app)
-
-        logging.info("DB Initialized Successfully.")
-    except Exception as e:
-        logging.error(f"DB Initialize Failed, {e}")
+    db.init_app(app)
+    logging.info("DB Initialized Successfully.")
 
     # Init migration
     migrate = Migrate(app, db)
     logging.info("Migrate Initialized Successfully.")
 
     # Import routes
-    try:
-            
-        @app.route("/src/assets/<path:filename>")
-        def serve_static(filename):
-            # Handle cases where the client sends a full URL (e.g. from a stored value)
-            # so we can still serve the file even if the path is duplicated.
-            if filename.startswith("http://") or filename.startswith("https://"):
-                from urllib.parse import urlparse
+    @app.route("/src/assets/<path:filename>")
+    def serve_static(filename):
+        # Handle cases where the client sends a full URL (e.g. from a stored value)
+        # so we can still serve the file even if the path is duplicated.
+        if filename.startswith("http://") or filename.startswith("https://"):
+            from urllib.parse import urlparse
 
-                parsed = urlparse(filename)
-                # parsed.path is like: /src/assets/<filename>
-                filename = parsed.path.lstrip("/")
+            parsed = urlparse(filename)
+            # parsed.path is like: /src/assets/<filename>
+            filename = parsed.path.lstrip("/")
 
-            # If client accidentally includes the assets folder again, strip it.
-            if filename.startswith("src/assets/"):
-                filename = filename[len("src/assets/"):]
+        # If client accidentally includes the assets folder again, strip it.
+        if filename.startswith("src/assets/"):
+            filename = filename[len("src/assets/"):]
 
-            return send_from_directory(
-                current_app.config["SERVE_STATIC_FOLDER"], filename
-            )
+        return send_from_directory(
+            current_app.config["SERVE_STATIC_FOLDER"], filename
+        )
 
-        from src.routes import init_routes
+    from src.routes import init_routes
 
-        init_routes(app)
-        logging.info("Routes Initialized Successfully.")
-    except Exception as e:
-        logging.error(f"Routes Initialize Failed ,{e}")
+    init_routes(app)
+    logging.info("Routes Initialized Successfully.")
 
     with app.app_context():
         db.create_all()
