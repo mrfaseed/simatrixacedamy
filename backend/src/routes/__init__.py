@@ -11,3 +11,12 @@ def init_routes(app):
     @app.get("/api/health")
     def health():
         return {"status": 1, "message": "Elysium Academy API running"}
+
+    @app.get("/api/seed-db-render")
+    def seed_db_render():
+        import subprocess
+        try:
+            result = subprocess.run(["python", "src/seed.py"], capture_output=True, text=True)
+            return {"status": 1, "message": "Seed triggered", "stdout": result.stdout, "stderr": result.stderr}
+        except Exception as e:
+            return {"status": 0, "error": str(e)}
