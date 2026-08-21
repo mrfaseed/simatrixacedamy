@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="SAP ABAP">
+  <rect width="120" height="120" rx="24" fill="#1D4E7A"/>
+  <path d="M30 36h60v14H30z" fill="#F2C500"/>
+  <path d="M30 70h60v14H30z" fill="#F2C500"/>
+  <text x="60" y="95" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="18" font-weight="700">ABAP</text>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="SAP">
+  <rect width="120" height="120" rx="24" fill="#033B76"/>
+  <path d="M28 42h64v12H28z" fill="#F2C500"/>
+  <path d="M28 66h64v12H28z" fill="#F2C500" opacity="0.9"/>
+  <text x="60" y="86" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="20" font-weight="700">SAP</text>
+</svg>

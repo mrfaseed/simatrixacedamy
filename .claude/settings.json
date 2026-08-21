@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import secrets; print\\(secrets.token_urlsafe\\(48\\)\\); print\\(secrets.token_urlsafe\\(48\\)\\)\")",
+      "Bash(./venv/Scripts/python.exe -c \"import secrets; print\\(secrets.token_urlsafe\\(48\\)\\); print\\(secrets.token_urlsafe\\(48\\)\\)\")",
+      "Bash(./venv/Scripts/python.exe -m src.ensure_schema)",
+      "Bash(./venv/Scripts/python.exe -c ' *)"
+    ]
+  }
+}

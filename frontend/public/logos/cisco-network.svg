@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Cisco Networking">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00A4EF"/>
+      <stop offset="100%" stop-color="#1F5BB5"/>
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="24" fill="#0A1F50"/>
+  <path d="M30 82h60M48 28v64M72 28v64" stroke="url(#grad)" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="30" cy="48" r="10" fill="#fff"/>
+  <circle cx="90" cy="48" r="10" fill="#fff"/>
+  <circle cx="60" cy="82" r="10" fill="#fff"/>
+  <path d="M36 46L54 60M84 46L66 60" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+</svg>

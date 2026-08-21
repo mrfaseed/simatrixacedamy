@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Digital Marketing">
+  <rect width="120" height="120" rx="24" fill="#2E184B"/>
+  <circle cx="42" cy="60" r="18" fill="#F9C80E"/>
+  <path d="M42 42v36M24 60h36" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+  <path d="M66 46l28-14v42L66 82" fill="#F35D27"/>
+  <path d="M74 44v12M90 34v12M90 58v12" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+</svg>

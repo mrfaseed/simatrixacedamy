@@ -1,0 +1,496 @@
+@import "tailwindcss";
+
+@theme {
+  /* Elegant Academic — authority navy. Deep, refined, university-grade. */
+  --color-brand-50: #f4f6fb;
+  --color-brand-100: #e7ecf5;
+  --color-brand-200: #ccd6e8;
+  --color-brand-300: #a3b4d3;
+  --color-brand-400: #7189b4;
+  --color-brand-500: #4c6494;
+  --color-brand-600: #364a74;
+  --color-brand-700: #29395b;
+  --color-brand-800: #1d2a45;
+  --color-brand-900: #131c30;
+  --color-brand-950: #0a1020;
+  /* Premium gold accent — dark goldenrod, scholarly rather than bright amber. */
+  --color-accent-300: #e6c766;
+  --color-accent-400: #d8ac37;
+  --color-accent-500: #ca8a04;
+  --color-accent-600: #a06d06;
+  --color-accent-700: #7c540b;
+  --font-display: "Crimson Pro", Georgia, "Times New Roman", serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+/* --- Accessibility & interaction baseline (UI/UX pre-delivery checklist) --- */
+
+/* Tailwind v4 no longer sets cursor:pointer on buttons — restore it. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+label[for],
+summary {
+  cursor: pointer;
+}
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/* Remove the 300ms mobile tap delay on interactive elements. */
+a,
+button,
+[role="button"],
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+/* Visible keyboard focus on every interactive element (0-specificity so
+   component-level rings still win where defined). */
+:where(a, button, [role="button"], input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Skip-to-content link: off-screen until focused. */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-160%);
+  transition: transform 0.2s ease;
+  border-radius: 0.75rem;
+  background: var(--color-brand-600);
+  color: #fff;
+  padding: 0.625rem 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: 0 8px 24px -8px rgba(15, 23, 42, 0.4);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #f8fafc;
+  background-image:
+    radial-gradient(900px 500px at 100% -5%, rgba(19, 28, 48, 0.06), transparent 55%),
+    radial-gradient(800px 450px at -10% 10%, rgba(202, 138, 4, 0.045), transparent 55%),
+    radial-gradient(700px 600px at 50% 110%, rgba(19, 28, 48, 0.05), transparent 60%);
+  background-attachment: fixed;
+  color: #0f172a;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, .font-display {
+  font-family: "Crimson Pro", Georgia, "Times New Roman", serif;
+  letter-spacing: -0.005em;
+}
+
+/* Serif headings read better with slightly looser tracking than the sans
+   utilities assume — soften Tailwind's tracking-tight on display type. */
+.font-display.tracking-tight,
+h1.tracking-tight, h2.tracking-tight, h3.tracking-tight {
+  letter-spacing: -0.01em;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+/* Comfortable, consistent interaction targets across touch devices. */
+@media (pointer: coarse) {
+  button,
+  a,
+  select,
+  summary,
+  [role="button"] {
+    min-height: 44px;
+  }
+}
+
+/* Prevent iOS from zooming when a form control receives focus. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+::selection {
+  background: rgba(202, 138, 4, 0.22);
+  color: #131c30;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(24px, -32px) scale(1.08); }
+  66% { transform: translate(-20px, 18px) scale(0.94); }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-12deg); }
+  40% { transform: rotate(10deg); }
+  60% { transform: rotate(-6deg); }
+  80% { transform: rotate(4deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.95; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes nudgeX {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+
+/* Animated multi-stop gradient surface */
+.animated-gradient {
+  background-size: 220% 220%;
+  animation: gradientShift 14s ease infinite;
+}
+
+/* Continuous gentle float for decorative elements */
+.float-y { animation: floatY 6s ease-in-out infinite; }
+
+/* Scroll-reveal: hidden until .is-visible is toggled by observer */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--d, 0ms);
+  will-change: opacity, transform;
+}
+/* Directional entrance variants (set via the Reveal `dir` prop). */
+.scroll-reveal[data-dir="down"]  { transform: translateY(-28px); }
+.scroll-reveal[data-dir="left"]  { transform: translateX(-34px); }
+.scroll-reveal[data-dir="right"] { transform: translateX(34px); }
+.scroll-reveal[data-dir="scale"] { transform: scale(0.93); }
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Premium serif headline entrance — rises and sharpens from a soft blur. */
+@keyframes headlineIn {
+  0%   { opacity: 0; transform: translateY(26px); filter: blur(12px); }
+  60%  { filter: blur(2px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.headline-reveal {
+  opacity: 0;
+  animation: headlineIn 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--d, 0ms);
+  will-change: opacity, transform, filter;
+}
+
+/* Gold rule that draws outward from its center when it enters view. */
+.rule-draw {
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--d, 0ms);
+}
+.rule-draw.is-visible { transform: scaleX(1); }
+
+/* Shine sweep used on buttons / cards */
+.shine {
+  position: relative;
+  overflow: hidden;
+}
+.shine::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: skewX(-18deg);
+  transition: left 0.6s ease;
+}
+.shine:hover::before { left: 140%; }
+
+/* ---------------- Premium animation kit ---------------- */
+
+@keyframes aurora {
+  0%   { transform: translate(-10%, -10%) rotate(0deg) scale(1); }
+  33%  { transform: translate(8%, 6%) rotate(40deg) scale(1.15); }
+  66%  { transform: translate(-6%, 10%) rotate(-30deg) scale(0.95); }
+  100% { transform: translate(-10%, -10%) rotate(0deg) scale(1); }
+}
+@keyframes textShimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes spinSlow {
+  to { transform: rotate(360deg); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Aurora gradient backdrop (use inside a relative, overflow-hidden parent) */
+.aurora {
+  position: absolute;
+  inset: -40%;
+  background:
+    radial-gradient(closest-side, rgba(76,100,148,0.5), transparent 70%) 20% 30% / 55% 55% no-repeat,
+    radial-gradient(closest-side, rgba(202,138,4,0.34), transparent 70%) 75% 25% / 50% 50% no-repeat,
+    radial-gradient(closest-side, rgba(29,42,69,0.5), transparent 70%) 55% 75% / 60% 60% no-repeat;
+  filter: blur(40px);
+  animation: aurora 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Shimmering gradient text (animated sheen) */
+.text-shimmer {
+  background: linear-gradient(100deg, var(--color-brand-700) 0%, var(--color-accent-400) 35%, var(--color-brand-500) 50%, var(--color-accent-400) 65%, var(--color-brand-700) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: textShimmer 6s linear infinite;
+}
+
+/* Animated gradient border card. Put real content in a child with its own bg. */
+.gradient-border {
+  position: relative;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(120deg, var(--color-brand-400), var(--color-accent-400), var(--color-brand-500)) border-box;
+  border: 1.5px solid transparent;
+  background-size: 100% 100%, 200% 200%;
+  transition: background-position 0.6s ease;
+}
+.group:hover > .gradient-border,
+.gradient-border:hover { background-position: 0 0, 100% 50%; }
+
+/* Pointer-tracking spotlight (set --mx/--my in % via JS or rely on center) */
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 0%), rgba(202,138,4,0.13), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.spotlight:hover::after { opacity: 1; }
+
+/* 3D tilt card (transform set inline via JS) */
+.tilt {
+  transform-style: preserve-3d;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+/* Marquee track (duplicate children for seamless loop) */
+.marquee { overflow: hidden; }
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 26s linear infinite;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+.spin-slow { animation: spinSlow 14s linear infinite; }
+
+/* Entrance animation with optional stagger via --d */
+.reveal {
+  opacity: 0;
+  animation: floatUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--d, 0ms);
+}
+
+/* Decorative animated blobs */
+.blob {
+  animation: blob 14s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Gradient text helper (accent / warm) */
+.text-gradient {
+  background: linear-gradient(120deg, var(--color-accent-300), var(--color-accent-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Navy → gold blended text for premium emphasis */
+.text-navy-gold {
+  background: linear-gradient(110deg, var(--color-brand-700) 0%, var(--color-brand-500) 55%, var(--color-accent-500) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Brand-blue gradient text — mirrors the footer "Academy" treatment, tuned for light backgrounds */
+.text-brand-gradient {
+  background: linear-gradient(100deg, var(--color-brand-700), var(--color-brand-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Footer-style gradient hairline divider */
+.hairline {
+  height: 1px;
+  width: 100%;
+  border: 0;
+  background: linear-gradient(to right, transparent, rgba(89, 141, 255, 0.5), transparent);
+}
+
+/* Skeleton shimmer block */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #e9eef6;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+/* Subtle dotted grid backdrop */
+.bg-dotgrid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Route/page enter transition (keyed by pathname) */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: pageEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Animated underline that grows from the center on hover */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: center;
+  background: linear-gradient(to right, var(--color-brand-500), var(--color-accent-500));
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-underline:hover::after { transform: scaleX(1); }
+
+/* Gentle pulse for badges / live dots */
+@keyframes softPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.65; transform: scale(1.12); }
+}
+.soft-pulse { animation: softPulse 2.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal, .blob, .skeleton::after, .animated-gradient, .float-y,
+  .aurora, .text-shimmer, .marquee-track, .spin-slow, .soft-pulse,
+  .page-enter, .headline-reveal { animation: none; }
+  .reveal, .headline-reveal { opacity: 1; }
+  .rule-draw { transition: none; transform: none; }
+  .tilt { transform: none !important; }
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .shine::before { display: none; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(41, 57, 91, 0.35) transparent;
+}
+*::-webkit-scrollbar { width: 9px; height: 9px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: rgba(41, 57, 91, 0.3);
+  border-radius: 9px;
+}
+*::-webkit-scrollbar-thumb:hover { background: rgba(202, 138, 4, 0.5); }

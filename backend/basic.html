@@ -1,0 +1,1300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python for Animes — Complete Course (Basics → Advanced)</title>
+<style>
+  :root{
+    --bg:#0b0c10; --card:#111318; --card2:#0f1118; --muted:#9aa2ad; --ink:#e8eef7;
+    --brand:#7c5cff; --brand2:#ff5cad; --accent:#ffd166; --border:#232630;
+    --ok:#57cc99; --warn:#ff9f1c; --info:#5cc8ff;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font:14px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background:
+      radial-gradient(900px 500px at 100% 0%, rgba(255,92,173,.10), transparent 60%),
+      radial-gradient(1200px 600px at 0% 0%, #141723, #0b0c10 60%);
+    color:var(--ink);
+  }
+  ::-webkit-scrollbar{width:10px; height:10px}
+  ::-webkit-scrollbar-thumb{background:#252a3a; border-radius:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  a{color:#8ab4ff}
+
+  /* ===== Top bar ===== */
+  .topbar{
+    position:sticky; top:0; z-index:20;
+    display:flex; align-items:center; gap:14px;
+    padding:12px 18px; border-bottom:1px solid var(--border);
+    background:rgba(11,12,16,.85); backdrop-filter:blur(10px);
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--brand2)); box-shadow:0 0 14px rgba(124,92,255,.9)}
+  .brand small{color:var(--muted); font-weight:600; margin-left:4px}
+  .topbar .spacer{flex:1}
+  .search{
+    display:flex; align-items:center; gap:8px;
+    background:#0f1118; border:1px solid var(--border); border-radius:999px;
+    padding:8px 14px; min-width:220px;
+  }
+  .search input{background:transparent;border:0;outline:0;color:var(--ink);width:100%;font-size:13px}
+  .search svg{opacity:.6; flex:none}
+
+  .xp{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted)}
+  .xp .bar{width:120px; height:8px; border-radius:999px; background:#1a1d29; overflow:hidden; border:1px solid var(--border)}
+  .xp .fill{height:100%; background:linear-gradient(90deg,var(--brand),var(--brand2)); transition:width .4s ease}
+
+  /* ===== Layout ===== */
+  .shell{display:grid; grid-template-columns:280px 1fr; min-height:calc(100% - 58px)}
+  @media (max-width:900px){ .shell{grid-template-columns:1fr} .sidebar{display:none} .sidebar.open{display:block} }
+
+  /* ===== Sidebar ===== */
+  .sidebar{
+    border-right:1px solid var(--border); padding:16px 10px 40px; overflow-y:auto;
+    height:calc(100vh - 58px); position:sticky; top:58px;
+  }
+  .mascot{
+    display:flex; gap:10px; align-items:center; padding:10px 10px 14px; margin-bottom:6px;
+    border-bottom:1px dashed var(--border);
+  }
+  .mascot .msg{font-size:12px; color:var(--muted)}
+  .mascot .msg b{color:var(--accent)}
+  .cat{margin:14px 6px 6px; font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:#7b8696; font-weight:800}
+  .topic-btn{
+    width:100%; text-align:left; display:flex; align-items:center; gap:8px;
+    padding:9px 10px; border-radius:10px; border:1px solid transparent; background:transparent;
+    color:#cbd3e0; cursor:pointer; font-size:13px; margin:2px 0;
+  }
+  .topic-btn:hover{background:#151824}
+  .topic-btn.active{background:#1a1030; border-color:#3a2a66; color:#fff}
+  .topic-btn .lvl{
+    width:7px; height:7px; border-radius:50%; flex:none;
+  }
+  .lvl.b{background:var(--ok)} .lvl.i{background:var(--info)} .lvl.a{background:var(--brand2)}
+  .topic-btn .done{margin-left:auto; font-size:11px; color:var(--ok); opacity:0}
+  .topic-btn.completed .done{opacity:1}
+
+  /* ===== Main ===== */
+  main{padding:26px 30px 80px; max-width:980px}
+  .crumbs{color:var(--muted); font-size:12px; margin-bottom:10px}
+  .crumbs b{color:#cbd3e0}
+
+  .head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:6px; flex-wrap:wrap}
+  h1{margin:0 0 6px; font-size:26px; letter-spacing:.2px}
+  .chip{
+    display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px;
+    font-size:11px; font-weight:800; letter-spacing:.02em; border:1px solid var(--border);
+  }
+  .chip.beginner{color:#9ae6b4; background:#0e1c14; border-color:#1c2b22}
+  .chip.intermediate{color:#a9def9; background:#0e1a22; border-color:#1c3040}
+  .chip.advanced{color:#ffb3d9; background:#22101a; border-color:#3a1c2e}
+
+  .tags{display:flex; gap:6px; flex-wrap:wrap; margin:10px 0 18px}
+  .tag{font-size:11px; padding:3px 9px; border-radius:999px; background:#151824; color:var(--muted); border:1px solid var(--border)}
+
+  .lead{font-size:15px; color:#d7dde7; margin:0 0 18px}
+
+  .card{
+    background:linear-gradient(180deg, var(--card), var(--card2));
+    border:1px solid var(--border); border-radius:16px; padding:18px;
+    margin-bottom:18px; box-shadow:0 20px 40px rgba(0,0,0,.25);
+  }
+  .card h3{margin:0 0 10px; font-size:14px; letter-spacing:.02em; color:#cbd3e0; display:flex; align-items:center; gap:8px}
+  .card h3 .ico{font-size:16px}
+
+  .scenario{
+    border-left:3px solid var(--brand2); background:rgba(255,92,173,.06);
+    padding:10px 14px; border-radius:8px; font-size:13.5px; color:#eadff0; margin-bottom:4px;
+  }
+
+  .keypoints{margin:0; padding-left:18px; color:#cfd7e6; font-size:13.5px}
+  .keypoints li{margin:4px 0}
+
+  pre.code{
+    margin:0; background:#0a0b10; border:1px solid var(--border); border-radius:12px;
+    padding:14px 16px; overflow-x:auto; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size:12.8px; line-height:1.65;
+  }
+  .kw{color:#c792ea} .fn{color:#82aaff} .str{color:#c3e88d} .com{color:#5c6472; font-style:italic}
+  .num{color:#f78c6c} .cls{color:#ffcb6b}
+
+  .out{
+    background:#06110c; border:1px solid #163326; border-radius:12px; padding:12px 14px;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12.8px;
+    color:#9ae6b4; white-space:pre-wrap;
+  }
+  .out::before{content:"▶ Output"; display:block; color:#57cc99; font-weight:800; font-size:11px; margin-bottom:6px; letter-spacing:.05em}
+
+  .grid2{display:grid; grid-template-columns:1fr; gap:14px}
+  @media (min-width:760px){ .grid2{grid-template-columns:1.15fr .85fr} }
+
+  .footer-nav{display:flex; justify-content:space-between; gap:10px; margin-top:22px}
+  .navbtn{
+    display:flex; align-items:center; gap:8px; padding:10px 16px; border-radius:12px;
+    border:1px solid var(--border); background:#151824; color:var(--ink); cursor:pointer; font-size:13px;
+  }
+  .navbtn:hover{filter:brightness(1.1)}
+  .navbtn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2)); border:none; font-weight:700}
+  .navbtn:disabled{opacity:.35; cursor:not-allowed}
+
+  .mark{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted); cursor:pointer; user-select:none}
+  .mark input{accent-color:var(--brand)}
+
+  .author-strip{display:flex; align-items:center; gap:12px; margin:0 0 18px; padding-bottom:14px; border-bottom:1px dashed var(--border)}
+  .avatar-svg{width:52px;height:52px; border-radius:50%; background:#151824; border:2px solid #3a2a66; display:flex; align-items:center; justify-content:center}
+  .author-strip .meta{font-size:12.5px; color:#aab3c0}
+  .author-strip .meta b{color:#e8eef7}
+
+  .empty-hint{color:var(--muted); font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span> Python for Animes <small>· Complete Course</small></div>
+  <div class="spacer"></div>
+  <div class="search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#9aa2ad" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="#9aa2ad" stroke-width="2" stroke-linecap="round"/></svg>
+    <input id="searchBox" placeholder="Search topics… e.g. decorators" />
+  </div>
+  <div class="xp">
+    <span id="xpLabel">0 / 0 completed</span>
+    <div class="bar"><div class="fill" id="xpFill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="mascot">
+      <div class="avatar-svg">
+        <svg width="30" height="30" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="30" fill="#1a1030" stroke="#7c5cff" stroke-width="2"/>
+          <circle cx="22" cy="30" r="4" fill="#ffd166"/>
+          <circle cx="42" cy="30" r="4" fill="#ffd166"/>
+          <path d="M20 42 Q32 50 44 42" stroke="#ff5cad" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M10 20 L20 26 M54 20 L44 26" stroke="#7c5cff" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="msg">Hey senpai! I'm <b>Py-chan</b> 🐍<br/>Pick a topic and let's level up.</div>
+    </div>
+    <div id="navList"></div>
+  </aside>
+
+  <main>
+    <div class="author-strip">
+      <div class="avatar-svg">
+        <svg width="30" height="30" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="30" fill="#1a1030" stroke="#ff5cad" stroke-width="2"/>
+          <circle cx="24" cy="28" r="3.5" fill="#5cc8ff"/>
+          <circle cx="40" cy="28" r="3.5" fill="#5cc8ff"/>
+          <path d="M22 40 Q32 46 42 40" stroke="#ffd166" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="meta"><b>Course:</b> Python — Zero to Advanced &nbsp;|&nbsp; Real-world examples in every lesson &nbsp;|&nbsp; Built for Simatrix Academy learners</div>
+    </div>
+
+    <div class="crumbs" id="crumbs"></div>
+    <div id="content"></div>
+  </main>
+</div>
+
+<script>
+/* ============================ COURSE DATA ============================ */
+const CATS = ["Fundamentals","Control Flow","Data Structures","Functions","Object-Oriented Programming","Files & Data","Exception Handling","Advanced Python"];
+
+const T = (s)=>s; // no-op tag helper for readability
+
+const TOPICS = [
+/* ---------------- FUNDAMENTALS ---------------- */
+{
+  id:"variables", cat:"Fundamentals", title:"Variables & Data Types", level:"beginner",
+  tags:["int","float","str","bool","type()"],
+  lead:"Variables are labelled boxes that hold data. Python figures out the type automatically — this is called dynamic typing.",
+  scenario:"Guild Registration Desk — every adventurer who joins the Hero Guild gets their basic profile stored: name, level, HP, and guild membership status.",
+  key:[
+    "Python has no separate 'declare' step — assignment creates the variable.",
+    "Core built-in types: int, float, str, bool, complex, NoneType.",
+    "Use type(x) to inspect a variable's type at runtime."
+  ],
+  code:`hero_name = "Aria Flameheart"      <span class="com"># str</span>
+hero_level = 12                     <span class="com"># int</span>
+hp_percent = 87.5                   <span class="com"># float</span>
+is_guild_member = True              <span class="com"># bool</span>
+pet_dragon = None                   <span class="com"># NoneType</span>
+
+<span class="kw">print</span>(<span class="fn">type</span>(hero_name), <span class="fn">type</span>(hero_level), <span class="fn">type</span>(hp_percent))
+<span class="kw">print</span>(<span class="str">f"{hero_name} | Lv.{hero_level} | HP {hp_percent}% | Guild: {is_guild_member}"</span>)`,
+  out:`<class 'str'> <class 'int'> <class 'float'>
+Aria Flameheart | Lv.12 | HP 87.5% | Guild: True`
+},
+{
+  id:"typecast", cat:"Fundamentals", title:"Type Casting", level:"beginner",
+  tags:["int()","float()","str()","conversion"],
+  lead:"Type casting converts a value from one type to another, e.g. turning user text input into a number you can do math with.",
+  scenario:"Tournament Sign-up Form — players type their age and entry fee as text; the system must convert them to numbers before validating eligibility.",
+  key:[
+    "input() always returns a string, even for numbers.",
+    "int('12') → 12, float('3.5') → 3.5, str(42) → '42'.",
+    "Casting an invalid string (e.g. int('abc')) raises a ValueError."
+  ],
+  code:`age_input = <span class="str">"17"</span>          <span class="com"># came from a form field, so it's text</span>
+fee_input = <span class="str">"49.99"</span>
+
+age = <span class="fn">int</span>(age_input)
+entry_fee = <span class="fn">float</span>(fee_input)
+
+<span class="kw">if</span> age >= 16:
+    <span class="kw">print</span>(<span class="str">f"Eligible! Pay \${entry_fee:.2f} to enter the Tournament of Blades."</span>)
+<span class="kw">else</span>:
+    <span class="kw">print</span>(<span class="str">"Too young for this arc — try the Junior League."</span>)`,
+  out:`Eligible! Pay $49.99 to enter the Tournament of Blades.`
+},
+{
+  id:"operators", cat:"Fundamentals", title:"Operators", level:"beginner",
+  tags:["arithmetic","comparison","logical"],
+  lead:"Operators combine values: arithmetic (+ - * / // % **), comparison (== != > <), and logical (and or not).",
+  scenario:"Battle Damage Calculator — combine attack power, defense, and a critical-hit chance to decide how much HP an enemy loses.",
+  key:[
+    "// is floor (integer) division, % is remainder (modulo).",
+    "** is exponent: 2 ** 10 == 1024.",
+    "Comparison chaining works: 0 < score <= 100."
+  ],
+  code:`attack = 85
+defense = 30
+is_critical = <span class="kw">True</span>
+
+base_damage = attack - defense
+final_damage = base_damage * 2 <span class="kw">if</span> is_critical <span class="kw">else</span> base_damage
+
+<span class="kw">print</span>(<span class="str">"Base damage:"</span>, base_damage)
+<span class="kw">print</span>(<span class="str">"Critical hit?"</span>, is_critical)
+<span class="kw">print</span>(<span class="str">"Final damage dealt:"</span>, final_damage)
+<span class="kw">print</span>(<span class="str">"Enemy defeated?"</span>, final_damage >= 100)`,
+  out:`Base damage: 55
+Critical hit? True
+Final damage dealt: 110
+Enemy defeated? True`
+},
+{
+  id:"strings", cat:"Fundamentals", title:"Strings & String Methods", level:"beginner",
+  tags:["slicing",".upper()",".split()","f-strings"],
+  lead:"Strings are immutable sequences of characters. Python gives you dozens of built-in methods to search, transform, and format them.",
+  scenario:"Character Name Generator — clean up and format a messy user-submitted character name for the game database.",
+  key:[
+    "Strings support slicing: name[0:3], name[-1], name[::-1] (reverse).",
+    "Common methods: .strip(), .lower(), .upper(), .replace(), .split(), .join().",
+    "f-strings (f'...{expr}...') are the modern way to format text."
+  ],
+  code:`raw = <span class="str">"   naruTO uzuMAKI  "</span>
+
+clean = raw.strip().title()
+first, last = clean.split()
+initials = <span class="str">f"{first[0]}.{last[0]}."</span>
+
+<span class="kw">print</span>(<span class="fn">repr</span>(clean))
+<span class="kw">print</span>(<span class="str">f"Callsign: {initials} | Reversed: {clean[::-1]}"</span>)
+<span class="kw">print</span>(<span class="str">"-"</span>.join([first, last]).lower())`,
+  out:`'Naruto Uzumaki'
+Callsign: N.U. | Reversed: ikamuzU otoraN
+naruto-uzumaki`
+},
+{
+  id:"fstrings", cat:"Fundamentals", title:"Input, Output & Formatting", level:"beginner",
+  tags:["print()","input()","f-string spec"],
+  lead:"print() sends text to the console; input() pauses and reads what the user types. Format specifiers control decimals, padding, and alignment.",
+  scenario:"Guild Stat Sheet — display a character's stats neatly aligned in a table-like console readout.",
+  key:[
+    "print(a, b, sep=', ', end='\\n') controls separators and line endings.",
+    "f'{value:.2f}' rounds to 2 decimals; f'{value:>10}' right-aligns in 10 chars.",
+    "input() always returns str — cast it if you need a number."
+  ],
+  code:`stats = {<span class="str">"STR"</span>: 78, <span class="str">"AGI"</span>: 92, <span class="str">"MAG"</span>: 65.333}
+
+<span class="kw">for</span> stat, value <span class="kw">in</span> stats.items():
+    <span class="kw">print</span>(<span class="str">f"{stat:<5}: {value:>8.2f}"</span>)
+
+<span class="kw">print</span>(<span class="str">"HP"</span>, <span class="str">"MP"</span>, <span class="str">"SP"</span>, sep=<span class="str">" | "</span>)`,
+  out:`STR  :    78.00
+AGI  :    92.00
+MAG  :    65.33
+HP | MP | SP`
+},
+
+/* ---------------- CONTROL FLOW ---------------- */
+{
+  id:"ifelse", cat:"Control Flow", title:"if / elif / else", level:"beginner",
+  tags:["conditions","branching"],
+  lead:"Conditional statements let your program make decisions and run different code paths depending on data.",
+  scenario:"Rank Promotion System — a ninja's rank is decided automatically based on their mission points.",
+  key:[
+    "Python uses indentation (not braces) to define code blocks.",
+    "elif chains let you check multiple conditions in order.",
+    "Any non-zero/non-empty value is 'truthy'."
+  ],
+  code:`mission_points = 340
+
+<span class="kw">if</span> mission_points >= 500:
+    rank = <span class="str">"S-Rank"</span>
+<span class="kw">elif</span> mission_points >= 300:
+    rank = <span class="str">"A-Rank"</span>
+<span class="kw">elif</span> mission_points >= 100:
+    rank = <span class="str">"B-Rank"</span>
+<span class="kw">else</span>:
+    rank = <span class="str">"Genin"</span>
+
+<span class="kw">print</span>(<span class="str">f"Mission points: {mission_points} → Promoted to {rank}"</span>)`,
+  out:`Mission points: 340 → Promoted to A-Rank`
+},
+{
+  id:"forloop", cat:"Control Flow", title:"for Loops", level:"beginner",
+  tags:["range()","enumerate()","iteration"],
+  lead:"for loops iterate over any sequence — lists, strings, ranges, dictionaries — running a block once per item.",
+  scenario:"Squad Roll Call — announce every member of a ninja squad with their position number.",
+  key:[
+    "range(n) generates 0..n-1; range(a,b,step) is flexible.",
+    "enumerate(seq) gives you (index, item) pairs.",
+    "You can loop directly over lists, strings, dict.items(), etc."
+  ],
+  code:`squad = [<span class="str">"Kai"</span>, <span class="str">"Mira"</span>, <span class="str">"Sora"</span>, <span class="str">"Ren"</span>]
+
+<span class="kw">for</span> index, member <span class="kw">in</span> <span class="fn">enumerate</span>(squad, start=1):
+    <span class="kw">print</span>(<span class="str">f"Squad member #{index}: {member}"</span>)
+
+total_power = <span class="fn">sum</span>(<span class="fn">len</span>(name) * 10 <span class="kw">for</span> name <span class="kw">in</span> squad)
+<span class="kw">print</span>(<span class="str">f"Combined chakra estimate: {total_power}"</span>)`,
+  out:`Squad member #1: Kai
+Squad member #2: Mira
+Squad member #3: Sora
+Squad member #4: Ren
+Combined chakra estimate: 150`
+},
+{
+  id:"whileloop", cat:"Control Flow", title:"while Loops", level:"beginner",
+  tags:["condition loops","game loop"],
+  lead:"while loops repeat as long as a condition stays true — perfect for anything that continues until a goal or failure state is reached.",
+  scenario:"Boss Battle Simulator — attack a boss repeatedly until its HP drops to zero.",
+  key:[
+    "Always make sure the loop condition can eventually become False.",
+    "while True: with an internal break is a common 'run forever until event' pattern.",
+    "Great for game loops, retry logic, and polling."
+  ],
+  code:`boss_hp = 100
+turn = 0
+
+<span class="kw">while</span> boss_hp > 0:
+    turn += 1
+    damage = 18 <span class="kw">if</span> turn % 3 != 0 <span class="kw">else</span> 40  <span class="com"># special move every 3rd turn</span>
+    boss_hp -= damage
+    <span class="kw">print</span>(<span class="str">f"Turn {turn}: dealt {damage} dmg → Boss HP: {max(boss_hp, 0)}"</span>)
+
+<span class="kw">print</span>(<span class="str">f"Boss defeated in {turn} turns!"</span>)`,
+  out:`Turn 1: dealt 18 dmg → Boss HP: 82
+Turn 2: dealt 18 dmg → Boss HP: 64
+Turn 3: dealt 40 dmg → Boss HP: 24
+Turn 4: dealt 18 dmg → Boss HP: 6
+Turn 5: dealt 18 dmg → Boss HP: 0
+Boss defeated in 5 turns!`
+},
+{
+  id:"breakcontinue", cat:"Control Flow", title:"break, continue & pass", level:"beginner",
+  tags:["loop control"],
+  lead:"break exits a loop early, continue skips to the next iteration, and pass is a no-op placeholder.",
+  scenario:"Inventory Scanner — stop scanning once a legendary item is found, but skip (ignore) any cursed items along the way.",
+  key:[
+    "break stops the loop immediately.",
+    "continue jumps back to the loop's condition/next item.",
+    "pass is used when Python needs a statement but you have nothing to do yet (e.g. stub functions)."
+  ],
+  code:`inventory = [<span class="str">"potion"</span>, <span class="str">"cursed ring"</span>, <span class="str">"iron sword"</span>, <span class="str">"legendary bow"</span>, <span class="str">"gold coin"</span>]
+
+<span class="kw">for</span> item <span class="kw">in</span> inventory:
+    <span class="kw">if</span> item == <span class="str">"cursed ring"</span>:
+        <span class="kw">continue</span>   <span class="com"># skip cursed items entirely</span>
+    <span class="kw">if</span> item == <span class="str">"legendary bow"</span>:
+        <span class="kw">print</span>(<span class="str">f"Found it! {item.title()}"</span>)
+        <span class="kw">break</span>      <span class="com"># stop scanning, we got what we needed</span>
+    <span class="kw">print</span>(<span class="str">f"Scanned: {item}"</span>)`,
+  out:`Scanned: potion
+Scanned: iron sword
+Found it! Legendary Bow`
+},
+
+/* ---------------- DATA STRUCTURES ---------------- */
+{
+  id:"list", cat:"Data Structures", title:"Lists", level:"beginner",
+  tags:["mutable","ordered","[]"],
+  lead:"Lists are ordered, mutable collections — the go-to structure for anything you need to grow, shrink, sort, or reorder.",
+  scenario:"Party Inventory — an adventuring party's shared item bag that changes constantly during a dungeon crawl.",
+  key:[
+    "Lists keep insertion order and allow duplicates.",
+    "Common ops: .append(), .remove(), .sort(), .pop(), slicing.",
+    "Lists are mutable — modifying one variable can affect others pointing to the same list."
+  ],
+  code:`bag = [<span class="str">"health potion"</span>, <span class="str">"rope"</span>, <span class="str">"torch"</span>]
+
+bag.append(<span class="str">"mana crystal"</span>)
+bag.insert(0, <span class="str">"map"</span>)
+bag.remove(<span class="str">"torch"</span>)
+
+<span class="kw">print</span>(<span class="str">"Bag:"</span>, bag)
+<span class="kw">print</span>(<span class="str">"Items carried:"</span>, <span class="fn">len</span>(bag))
+<span class="kw">print</span>(<span class="str">"Sorted:"</span>, <span class="fn">sorted</span>(bag))`,
+  out:`Bag: ['map', 'health potion', 'rope', 'mana crystal']
+Items carried: 4
+Sorted: ['health potion', 'map', 'mana crystal', 'rope']`
+},
+{
+  id:"tuple", cat:"Data Structures", title:"Tuples", level:"beginner",
+  tags:["immutable","()"],
+  lead:"Tuples are ordered but immutable — once created, they can't be changed. Great for fixed groups of related values.",
+  scenario:"Spawn Coordinates — a monster's fixed (x, y, z) spawn point that should never accidentally be modified.",
+  key:[
+    "Tuples use () and are faster/lighter than lists.",
+    "Immutability makes them safe as dictionary keys.",
+    "Tuple unpacking: x, y, z = coords is extremely common."
+  ],
+  code:`spawn_point = (120, 5, -48)  <span class="com"># (x, y, z)</span>
+x, y, z = spawn_point
+
+<span class="kw">print</span>(<span class="str">f"Monster spawns at X:{x} Y:{y} Z:{z}"</span>)
+
+<span class="kw">try</span>:
+    spawn_point[0] = 999
+<span class="kw">except</span> <span class="cls">TypeError</span> <span class="kw">as</span> e:
+    <span class="kw">print</span>(<span class="str">"Can't modify a tuple:"</span>, e)`,
+  out:`Monster spawns at X:120 Y:5 Z:-48
+Can't modify a tuple: 'tuple' object does not support item assignment`
+},
+{
+  id:"set", cat:"Data Structures", title:"Sets", level:"beginner",
+  tags:["unique","unordered"],
+  lead:"Sets store unique, unordered values and support blazing-fast membership tests and mathematical set operations.",
+  scenario:"Guild Roster Dedup — merge two event sign-up lists while automatically removing duplicate members.",
+  key:[
+    "Duplicates are automatically discarded.",
+    "Union (|), intersection (&), difference (-) mirror math set theory.",
+    "'in' checks are O(1) on average — much faster than list membership for big data."
+  ],
+  code:`arena_signups = {<span class="str">"Kai"</span>, <span class="str">"Mira"</span>, <span class="str">"Sora"</span>}
+raid_signups   = {<span class="str">"Sora"</span>, <span class="str">"Ren"</span>, <span class="str">"Kai"</span>}
+
+<span class="kw">print</span>(<span class="str">"Joined at least one event:"</span>, arena_signups | raid_signups)
+<span class="kw">print</span>(<span class="str">"Joined BOTH events:"</span>, arena_signups & raid_signups)
+<span class="kw">print</span>(<span class="str">"Arena only:"</span>, arena_signups - raid_signups)
+<span class="kw">print</span>(<span class="str">"'Ren' in arena_signups?"</span>, <span class="str">"Ren"</span> <span class="kw">in</span> arena_signups)`,
+  out:`Joined at least one event: {'Kai', 'Mira', 'Sora', 'Ren'}
+Joined BOTH events: {'Kai', 'Sora'}
+Arena only: {'Mira'}
+'Ren' in arena_signups? False`
+},
+{
+  id:"dict", cat:"Data Structures", title:"Dictionaries", level:"beginner",
+  tags:["key-value","{}",".get()"],
+  lead:"Dictionaries store key → value pairs, giving you fast lookups by a meaningful key instead of a numeric index.",
+  scenario:"Character Stat Block — a fighter's full profile keyed by attribute name, easy to read and update.",
+  key:[
+    "Keys must be hashable (str, int, tuple...); values can be anything.",
+    ".get(key, default) avoids KeyError for missing keys.",
+    "Since Python 3.7 dicts preserve insertion order."
+  ],
+  code:`character = {
+    <span class="str">"name"</span>: <span class="str">"Kaelen"</span>,
+    <span class="str">"class"</span>: <span class="str">"Battlemage"</span>,
+    <span class="str">"level"</span>: 24,
+    <span class="str">"stats"</span>: {<span class="str">"str"</span>: 40, <span class="str">"int"</span>: 88}
+}
+
+character[<span class="str">"level"</span>] += 1              <span class="com"># level up!</span>
+mana = character.get(<span class="str">"mana"</span>, 0)      <span class="com"># safe default</span>
+
+<span class="kw">for</span> key, value <span class="kw">in</span> character.items():
+    <span class="kw">print</span>(<span class="str">f"{key}: {value}"</span>)
+<span class="kw">print</span>(<span class="str">"Mana (default):"</span>, mana)`,
+  out:`name: Kaelen
+class: Battlemage
+level: 25
+stats: {'str': 40, 'int': 88}
+Mana (default): 0`
+},
+{
+  id:"comprehension", cat:"Data Structures", title:"Comprehensions", level:"intermediate",
+  tags:["list comp","dict comp","set comp"],
+  lead:"Comprehensions build a new list/dict/set from an existing iterable in one readable line, replacing verbose loops.",
+  scenario:"Loot Filter — from a raw drop table, quickly build filtered and transformed loot lists for the player.",
+  key:[
+    "[expr for item in iterable if condition] → list comprehension.",
+    "{k: v for ...} and {expr for ...} build dicts and sets the same way.",
+    "Comprehensions are usually faster and more Pythonic than manual loops with .append()."
+  ],
+  code:`drops = [
+    {<span class="str">"name"</span>: <span class="str">"rusty dagger"</span>, <span class="str">"rarity"</span>: <span class="str">"common"</span>, <span class="str">"value"</span>: 5},
+    {<span class="str">"name"</span>: <span class="str">"phoenix feather"</span>, <span class="str">"rarity"</span>: <span class="str">"legendary"</span>, <span class="str">"value"</span>: 900},
+    {<span class="str">"name"</span>: <span class="str">"silver ring"</span>, <span class="str">"rarity"</span>: <span class="str">"rare"</span>, <span class="str">"value"</span>: 120},
+]
+
+rare_or_better = [d[<span class="str">"name"</span>] <span class="kw">for</span> d <span class="kw">in</span> drops <span class="kw">if</span> d[<span class="str">"rarity"</span>] != <span class="str">"common"</span>]
+value_map = {d[<span class="str">"name"</span>]: d[<span class="str">"value"</span>] <span class="kw">for</span> d <span class="kw">in</span> drops}
+rarities = {d[<span class="str">"rarity"</span>] <span class="kw">for</span> d <span class="kw">in</span> drops}
+
+<span class="kw">print</span>(rare_or_better)
+<span class="kw">print</span>(value_map)
+<span class="kw">print</span>(rarities)`,
+  out:`['phoenix feather', 'silver ring']
+{'rusty dagger': 5, 'phoenix feather': 900, 'silver ring': 120}
+{'common', 'legendary', 'rare'}`
+},
+
+/* ---------------- FUNCTIONS ---------------- */
+{
+  id:"functions", cat:"Functions", title:"Defining Functions", level:"beginner",
+  tags:["def","return","parameters"],
+  lead:"Functions package reusable logic behind a name, with parameters for input and return for output.",
+  scenario:"Damage Formula — every weapon in the game calls the same damage function instead of duplicating the math everywhere.",
+  key:[
+    "Default parameter values: def f(x, crit=False).",
+    "Functions can return multiple values as a tuple.",
+    "Docstrings (triple-quoted strings) document what a function does."
+  ],
+  code:`<span class="kw">def</span> <span class="fn">calculate_damage</span>(attack, defense, crit=<span class="kw">False</span>):
+    <span class="str">"""Return damage dealt after defense reduction."""</span>
+    base = <span class="fn">max</span>(attack - defense, 1)
+    <span class="kw">return</span> base * 2 <span class="kw">if</span> crit <span class="kw">else</span> base
+
+normal_hit = <span class="fn">calculate_damage</span>(50, 20)
+crit_hit = <span class="fn">calculate_damage</span>(50, 20, crit=<span class="kw">True</span>)
+
+<span class="kw">print</span>(<span class="str">f"Normal hit: {normal_hit}"</span>)
+<span class="kw">print</span>(<span class="str">f"Critical hit: {crit_hit}"</span>)`,
+  out:`Normal hit: 30
+Critical hit: 60`
+},
+{
+  id:"argskwargs", cat:"Functions", title:"*args & **kwargs", level:"intermediate",
+  tags:["variadic","unpacking"],
+  lead:"*args collects extra positional arguments into a tuple; **kwargs collects extra keyword arguments into a dict.",
+  scenario:"Party Buff Spell — cast a buff on any number of party members, with optional custom effects per cast.",
+  key:[
+    "*args lets a function accept any number of positional arguments.",
+    "**kwargs lets a function accept any number of named arguments.",
+    "You can mix: def f(a, b, *args, **kwargs)."
+  ],
+  code:`<span class="kw">def</span> <span class="fn">cast_buff</span>(spell_name, *targets, **effects):
+    <span class="kw">print</span>(<span class="str">f"Casting {spell_name} on: {', '.join(targets)}"</span>)
+    <span class="kw">for</span> effect, amount <span class="kw">in</span> effects.items():
+        <span class="kw">print</span>(<span class="str">f"  + {effect}: {amount}"</span>)
+
+<span class="fn">cast_buff</span>(<span class="str">"Radiant Shield"</span>, <span class="str">"Kai"</span>, <span class="str">"Mira"</span>, <span class="str">"Sora"</span>,
+           defense=15, hp_regen=8)`,
+  out:`Casting Radiant Shield on: Kai, Mira, Sora
+  + defense: 15
+  + hp_regen: 8`
+},
+{
+  id:"lambda", cat:"Functions", title:"Lambda Functions", level:"intermediate",
+  tags:["anonymous functions","sorted()","map()"],
+  lead:"Lambdas are small, unnamed, single-expression functions — handy as quick throwaway logic passed into other functions.",
+  scenario:"Leaderboard Sorting — rank players by a custom score formula without writing a full named function.",
+  key:[
+    "Syntax: lambda args: expression.",
+    "Commonly used with sorted(key=...), map(), and filter().",
+    "For anything beyond one expression, use a regular def function instead."
+  ],
+  code:`players = [
+    {<span class="str">"name"</span>: <span class="str">"Kai"</span>, <span class="str">"wins"</span>: 12, <span class="str">"losses"</span>: 4},
+    {<span class="str">"name"</span>: <span class="str">"Mira"</span>, <span class="str">"wins"</span>: 20, <span class="str">"losses"</span>: 15},
+    {<span class="str">"name"</span>: <span class="str">"Sora"</span>, <span class="str">"wins"</span>: 9, <span class="str">"losses"</span>: 1},
+]
+
+ranked = <span class="fn">sorted</span>(players, key=<span class="kw">lambda</span> p: p[<span class="str">"wins"</span>] / (p[<span class="str">"wins"</span>] + p[<span class="str">"losses"</span>]), reverse=<span class="kw">True</span>)
+names_only = <span class="fn">list</span>(<span class="fn">map</span>(<span class="kw">lambda</span> p: p[<span class="str">"name"</span>], ranked))
+
+<span class="kw">print</span>(<span class="str">"Leaderboard by win rate:"</span>, names_only)`,
+  out:`Leaderboard by win rate: ['Sora', 'Kai', 'Mira']`
+},
+{
+  id:"recursion", cat:"Functions", title:"Recursion", level:"intermediate",
+  tags:["base case","call stack"],
+  lead:"A recursive function calls itself to break a big problem into smaller identical sub-problems, until a base case stops it.",
+  scenario:"Skill Tree Unlock Cost — the total mana cost to unlock a skill depends on the cost of unlocking its prerequisite skill first.",
+  key:[
+    "Every recursive function needs a base case or it recurses forever.",
+    "Each call adds a frame to the call stack — deep recursion can hit Python's recursion limit.",
+    "Recursion often mirrors tree/graph-shaped problems very naturally."
+  ],
+  code:`<span class="kw">def</span> <span class="fn">unlock_cost</span>(tier):
+    <span class="str">"""Tier 1 costs 10 mana; each tier costs its own cost + previous tier's cost."""</span>
+    <span class="kw">if</span> tier == 1:
+        <span class="kw">return</span> 10   <span class="com"># base case</span>
+    <span class="kw">return</span> tier * 10 + <span class="fn">unlock_cost</span>(tier - 1)
+
+<span class="kw">for</span> t <span class="kw">in</span> <span class="fn">range</span>(1, 5):
+    <span class="kw">print</span>(<span class="str">f"Total mana to unlock tier {t}: {unlock_cost(t)}"</span>)`,
+  out:`Total mana to unlock tier 1: 10
+Total mana to unlock tier 2: 30
+Total mana to unlock tier 3: 60
+Total mana to unlock tier 4: 100`
+},
+{
+  id:"scope", cat:"Functions", title:"Scope (LEGB Rule)", level:"intermediate",
+  tags:["local","global","closures"],
+  lead:"Python resolves a variable name using the LEGB rule: Local → Enclosing → Global → Built-in, in that order.",
+  scenario:"Battle State Tracker — a global battle counter is shared across the whole game, while each function has its own local temp variables.",
+  key:[
+    "Variables assigned inside a function are local by default.",
+    "'global x' lets a function modify a module-level variable.",
+    "Closures: an inner function can 'remember' variables from its enclosing function."
+  ],
+  code:`battle_count = 0  <span class="com"># global</span>
+
+<span class="kw">def</span> <span class="fn">start_battle</span>():
+    <span class="kw">global</span> battle_count
+    battle_count += 1
+    <span class="kw">return</span> <span class="fn">make_reporter</span>(battle_count)
+
+<span class="kw">def</span> <span class="fn">make_reporter</span>(battle_id):
+    <span class="kw">def</span> <span class="fn">report</span>(event):   <span class="com"># closure: remembers battle_id</span>
+        <span class="kw">print</span>(<span class="str">f"[Battle #{battle_id}] {event}"</span>)
+    <span class="kw">return</span> report
+
+reporter = <span class="fn">start_battle</span>()
+reporter(<span class="str">"Boss appeared!"</span>)
+reporter(<span class="str">"Critical hit landed!"</span>)`,
+  out:`[Battle #1] Boss appeared!
+[Battle #1] Critical hit landed!`
+},
+
+/* ---------------- OOP ---------------- */
+{
+  id:"class", cat:"Object-Oriented Programming", title:"Classes & Objects", level:"intermediate",
+  tags:["__init__","self","instances"],
+  lead:"A class is a blueprint; objects are instances built from it. __init__ runs automatically when a new object is created.",
+  scenario:"Character Factory — every playable character (Warrior, Mage, Rogue...) is created from the same Character blueprint.",
+  key:[
+    "self refers to the specific instance calling the method.",
+    "Instance attributes live on self; they differ per object.",
+    "Methods are just functions defined inside a class."
+  ],
+  code:`<span class="kw">class</span> <span class="cls">Character</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name, hp, attack):
+        self.name = name
+        self.hp = hp
+        self.attack = attack
+
+    <span class="kw">def</span> <span class="fn">strike</span>(self, target):
+        target.hp -= self.attack
+        <span class="kw">print</span>(<span class="str">f"{self.name} hits {target.name} for {self.attack}! ({target.name} HP: {target.hp})"</span>)
+
+hero = <span class="cls">Character</span>(<span class="str">"Aria"</span>, hp=100, attack=25)
+goblin = <span class="cls">Character</span>(<span class="str">"Goblin"</span>, hp=40, attack=8)
+
+hero.strike(goblin)
+hero.strike(goblin)`,
+  out:`Aria hits Goblin for 25! (Goblin HP: 15)
+Aria hits Goblin for 25! (Goblin HP: -10)`
+},
+{
+  id:"inheritance", cat:"Object-Oriented Programming", title:"Inheritance", level:"intermediate",
+  tags:["super()","subclass"],
+  lead:"Inheritance lets a class reuse and extend another class's behaviour, avoiding duplicate code across similar character types.",
+  scenario:"Character Classes — Mage and Warrior both share core Character behaviour but each adds its own special ability.",
+  key:[
+    "class Mage(Character): means Mage inherits everything from Character.",
+    "super().__init__(...) calls the parent's constructor.",
+    "Subclasses can override parent methods to specialize behaviour."
+  ],
+  code:`<span class="kw">class</span> <span class="cls">Character</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name, hp):
+        self.name = name
+        self.hp = hp
+
+    <span class="kw">def</span> <span class="fn">describe</span>(self):
+        <span class="kw">return</span> <span class="str">f"{self.name} ({self.hp} HP)"</span>
+
+<span class="kw">class</span> <span class="cls">Mage</span>(Character):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name, hp, mana):
+        <span class="fn">super</span>().__init__(name, hp)
+        self.mana = mana
+
+    <span class="kw">def</span> <span class="fn">describe</span>(self):
+        <span class="kw">return</span> <span class="fn">super</span>().describe() + <span class="str">f" | Mana: {self.mana}"</span>
+
+merlin = <span class="cls">Mage</span>(<span class="str">"Merlin"</span>, hp=70, mana=120)
+<span class="kw">print</span>(merlin.describe())
+<span class="kw">print</span>(<span class="fn">isinstance</span>(merlin, Character))`,
+  out:`Merlin (70 HP) | Mana: 120
+True`
+},
+{
+  id:"polymorphism", cat:"Object-Oriented Programming", title:"Polymorphism", level:"intermediate",
+  tags:["method override","duck typing"],
+  lead:"Polymorphism means different classes can be used through the same interface — call .attack() and each class responds in its own way.",
+  scenario:"Battle Loop — a fight system calls .attack() on any combatant, whether it's a Warrior, Mage, or Archer, without caring which one it is.",
+  key:[
+    "Each subclass defines its own version of a shared method name.",
+    "The calling code doesn't need to know the exact class — it just calls the common method.",
+    "This is the foundation of flexible, extensible game/combat systems."
+  ],
+  code:`<span class="kw">class</span> <span class="cls">Warrior</span>:
+    <span class="kw">def</span> <span class="fn">attack</span>(self): <span class="kw">return</span> <span class="str">"swings a greatsword for 40 dmg"</span>
+
+<span class="kw">class</span> <span class="cls">Mage</span>:
+    <span class="kw">def</span> <span class="fn">attack</span>(self): <span class="kw">return</span> <span class="str">"casts fireball for 55 dmg"</span>
+
+<span class="kw">class</span> <span class="cls">Archer</span>:
+    <span class="kw">def</span> <span class="fn">attack</span>(self): <span class="kw">return</span> <span class="str">"fires 3 arrows for 30 dmg"</span>
+
+party = [Warrior(), Mage(), Archer()]
+
+<span class="kw">for</span> unit <span class="kw">in</span> party:
+    <span class="kw">print</span>(<span class="str">f"{type(unit).__name__} {unit.attack()}"</span>)`,
+  out:`Warrior swings a greatsword for 40 dmg
+Mage casts fireball for 55 dmg
+Archer fires 3 arrows for 30 dmg`
+},
+{
+  id:"encapsulation", cat:"Object-Oriented Programming", title:"Encapsulation", level:"intermediate",
+  tags:["private attrs","@property"],
+  lead:"Encapsulation hides internal state behind controlled access — using a leading underscore convention and @property for validation.",
+  scenario:"Bank-style Mana Vault — a character's mana shouldn't be set to a negative or impossible value from outside the class.",
+  key:[
+    "_name (single underscore) signals 'internal use' by convention.",
+    "__name (double underscore) triggers name-mangling for stronger protection.",
+    "@property lets you expose a controlled 'attribute-like' interface backed by real validation logic."
+  ],
+  code:`<span class="kw">class</span> <span class="cls">Mage</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, max_mana):
+        self._max_mana = max_mana
+        self._mana = max_mana
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">mana</span>(self):
+        <span class="kw">return</span> self._mana
+
+    <span class="kw">@mana.setter</span>
+    <span class="kw">def</span> <span class="fn">mana</span>(self, value):
+        self._mana = <span class="fn">max</span>(0, <span class="fn">min</span>(value, self._max_mana))  <span class="com"># clamp safely</span>
+
+merlin = <span class="cls">Mage</span>(max_mana=100)
+merlin.mana = 150   <span class="com"># tries to overfill</span>
+<span class="kw">print</span>(<span class="str">"Mana after overfill attempt:"</span>, merlin.mana)
+
+merlin.mana -= 300  <span class="com"># tries to go negative</span>
+<span class="kw">print</span>(<span class="str">"Mana after huge spell:"</span>, merlin.mana)`,
+  out:`Mana after overfill attempt: 100
+Mana after huge spell: 0`
+},
+{
+  id:"dunder", cat:"Object-Oriented Programming", title:"Magic (Dunder) Methods", level:"advanced",
+  tags:["__str__","__eq__","__add__"],
+  lead:"Dunder ('double underscore') methods let your objects hook into Python's built-in syntax: print(), +, ==, len(), and more.",
+  scenario:"Item Stacking — combine two potion stacks with + and print them nicely, just like built-in types.",
+  key:[
+    "__str__ controls what print(obj) shows.",
+    "__add__ lets your objects respond to the + operator.",
+    "__eq__ and __len__ hook into == and len() respectively."
+  ],
+  code:`<span class="kw">class</span> <span class="cls">ItemStack</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name, qty):
+        self.name, self.qty = name, qty
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> <span class="str">f"{self.qty}x {self.name}"</span>
+
+    <span class="kw">def</span> <span class="fn">__add__</span>(self, other):
+        <span class="kw">if</span> self.name != other.name:
+            <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">"Cannot stack different items"</span>)
+        <span class="kw">return</span> <span class="cls">ItemStack</span>(self.name, self.qty + other.qty)
+
+potions_a = <span class="cls">ItemStack</span>(<span class="str">"Health Potion"</span>, 3)
+potions_b = <span class="cls">ItemStack</span>(<span class="str">"Health Potion"</span>, 5)
+
+merged = potions_a + potions_b
+<span class="kw">print</span>(merged)`,
+  out:`8x Health Potion`
+},
+
+/* ---------------- FILES & DATA ---------------- */
+{
+  id:"fileio", cat:"Files & Data", title:"File I/O", level:"intermediate",
+  tags:["open()","with","read/write"],
+  lead:"Python reads and writes files through file objects, best managed with the 'with' statement so files always close properly.",
+  scenario:"Quest Log — append completed quests to a save file, then read the whole log back for the player to review.",
+  key:[
+    "'with open(path, mode) as f:' auto-closes the file, even on error.",
+    "Modes: 'r' read, 'w' write (overwrite), 'a' append, 'r+' read/write.",
+    "Always prefer 'with' over manual open()/close()."
+  ],
+  code:`<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"quest_log.txt"</span>, <span class="str">"a"</span>) <span class="kw">as</span> f:
+    f.write(<span class="str">"Completed: Defeat the Shadow Wyrm\\n"</span>)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"quest_log.txt"</span>, <span class="str">"r"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> line <span class="kw">in</span> f:
+        <span class="kw">print</span>(<span class="str">"📜"</span>, line.strip())`,
+  out:`📜 Completed: Defeat the Shadow Wyrm`
+},
+{
+  id:"json", cat:"Files & Data", title:"Working with JSON", level:"intermediate",
+  tags:["json.dumps","json.loads"],
+  lead:"JSON is the standard format for exchanging structured data. Python's json module converts between JSON text and native dict/list objects.",
+  scenario:"Save/Load Game State — serialize a player's profile to JSON to save it, then deserialize it back when they log in.",
+  key:[
+    "json.dumps(obj) → JSON string; json.loads(text) → Python object.",
+    "json.dump(obj, file) / json.load(file) work directly with file objects.",
+    "JSON maps cleanly to Python dict/list/str/int/float/bool/None."
+  ],
+  code:`<span class="kw">import</span> json
+
+player = {<span class="str">"name"</span>: <span class="str">"Aria"</span>, <span class="str">"level"</span>: 24, <span class="str">"skills"</span>: [<span class="str">"Fireball"</span>, <span class="str">"Heal"</span>]}
+
+save_data = json.dumps(player, indent=2)
+<span class="kw">print</span>(save_data)
+
+loaded_player = json.loads(save_data)
+<span class="kw">print</span>(<span class="str">"Loaded level:"</span>, loaded_player[<span class="str">"level"</span>])`,
+  out:`{
+  "name": "Aria",
+  "level": 24,
+  "skills": [
+    "Fireball",
+    "Heal"
+  ]
+}
+Loaded level: 24`
+},
+{
+  id:"csv", cat:"Files & Data", title:"Working with CSV", level:"intermediate",
+  tags:["csv module","spreadsheet data"],
+  lead:"The csv module reads and writes comma-separated tabular data — perfect for leaderboards, exports, and reports.",
+  scenario:"Tournament Results Export — write final standings to a CSV file that can be opened in Excel/Sheets.",
+  key:[
+    "csv.writer(file).writerow([...]) writes one row at a time.",
+    "csv.DictReader reads rows as dictionaries using the header row as keys.",
+    "Always open CSV files with newline='' on the file handle to avoid extra blank lines."
+  ],
+  code:`<span class="kw">import</span> csv
+
+standings = [(<span class="str">"Sora"</span>, 20), (<span class="str">"Kai"</span>, 15), (<span class="str">"Mira"</span>, 10)]
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"standings.csv"</span>, <span class="str">"w"</span>, newline=<span class="str">""</span>) <span class="kw">as</span> f:
+    writer = csv.writer(f)
+    writer.writerow([<span class="str">"player"</span>, <span class="str">"points"</span>])
+    writer.writerows(standings)
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"standings.csv"</span>) <span class="kw">as</span> f:
+    <span class="kw">for</span> row <span class="kw">in</span> csv.DictReader(f):
+        <span class="kw">print</span>(<span class="str">f"{row['player']}: {row['points']} pts"</span>)`,
+  out:`Sora: 20 pts
+Kai: 15 pts
+Mira: 10 pts`
+},
+
+/* ---------------- EXCEPTIONS ---------------- */
+{
+  id:"tryexcept", cat:"Exception Handling", title:"try / except / finally", level:"intermediate",
+  tags:["error handling","robustness"],
+  lead:"Exceptions let you gracefully handle errors instead of crashing — catch specific error types and always clean up with finally.",
+  scenario:"Item Shop Purchase — safely handle a player trying to buy an item with insufficient gold or an invalid item ID.",
+  key:[
+    "Catch the most specific exception type you can (ValueError, KeyError...).",
+    "'finally' always runs, whether an exception occurred or not — great for cleanup.",
+    "Avoid bare 'except:' — it silently hides bugs."
+  ],
+  code:`shop = {<span class="str">"potion"</span>: 20, <span class="str">"sword"</span>: 150}
+gold = 100
+
+<span class="kw">def</span> <span class="fn">buy</span>(item, gold):
+    <span class="kw">try</span>:
+        price = shop[item]
+        <span class="kw">if</span> price > gold:
+            <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">f"Not enough gold ({gold}) for {item} ({price})"</span>)
+        <span class="kw">return</span> gold - price
+    <span class="kw">except</span> <span class="cls">KeyError</span>:
+        <span class="kw">print</span>(<span class="str">f"'{item}' is not sold here."</span>)
+        <span class="kw">return</span> gold
+    <span class="kw">except</span> <span class="cls">ValueError</span> <span class="kw">as</span> e:
+        <span class="kw">print</span>(<span class="str">"Purchase failed:"</span>, e)
+        <span class="kw">return</span> gold
+    <span class="kw">finally</span>:
+        <span class="kw">print</span>(<span class="str">f"-- attempted to buy '{item}' --"</span>)
+
+gold = <span class="fn">buy</span>(<span class="str">"sword"</span>, gold)
+gold = <span class="fn">buy</span>(<span class="str">"potion"</span>, gold)
+<span class="kw">print</span>(<span class="str">"Remaining gold:"</span>, gold)`,
+  out:`-- attempted to buy 'sword' --
+Purchase failed: Not enough gold (100) for sword (150)
+-- attempted to buy 'potion' --
+Remaining gold: 80`
+},
+{
+  id:"customexc", cat:"Exception Handling", title:"Custom Exceptions", level:"advanced",
+  tags:["class-based errors","raise"],
+  lead:"You can define your own exception classes by subclassing Exception, giving your program meaningful, domain-specific error types.",
+  scenario:"Mana System — raise a specific InsufficientManaError instead of a generic error when a spell can't be cast.",
+  key:[
+    "Custom exceptions subclass Exception (or a more specific built-in).",
+    "They can carry extra data (like how much mana was missing).",
+    "Catching a custom exception type keeps error handling readable and precise."
+  ],
+  code:`<span class="kw">class</span> <span class="cls">InsufficientManaError</span>(<span class="cls">Exception</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, needed, available):
+        self.needed, self.available = needed, available
+        <span class="fn">super</span>().__init__(<span class="str">f"Need {needed} mana, only have {available}"</span>)
+
+<span class="kw">def</span> <span class="fn">cast_spell</span>(cost, current_mana):
+    <span class="kw">if</span> cost > current_mana:
+        <span class="kw">raise</span> <span class="cls">InsufficientManaError</span>(cost, current_mana)
+    <span class="kw">return</span> current_mana - cost
+
+<span class="kw">try</span>:
+    <span class="fn">cast_spell</span>(80, 50)
+<span class="kw">except</span> <span class="cls">InsufficientManaError</span> <span class="kw">as</span> e:
+    <span class="kw">print</span>(<span class="str">"Spell failed:"</span>, e)
+    <span class="kw">print</span>(<span class="str">"Missing mana:"</span>, e.needed - e.available)`,
+  out:`Spell failed: Need 80 mana, only have 50
+Missing mana: 30`
+},
+
+/* ---------------- ADVANCED ---------------- */
+{
+  id:"decorators", cat:"Advanced Python", title:"Decorators", level:"advanced",
+  tags:["@wraps","higher-order functions"],
+  lead:"A decorator wraps a function to add behaviour (logging, timing, access control) without changing the function's own code.",
+  scenario:"Skill Cooldown Guard — automatically block a skill from being used again before its cooldown finishes, without touching each skill's logic.",
+  key:[
+    "A decorator is just a function that takes a function and returns a new function.",
+    "@decorator_name above a function is sugar for func = decorator_name(func).",
+    "functools.wraps preserves the original function's name/docstring — good practice."
+  ],
+  code:`<span class="kw">import</span> functools, time
+
+<span class="kw">def</span> <span class="fn">log_call</span>(func):
+    <span class="kw">@functools.wraps</span>(func)
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        <span class="kw">print</span>(<span class="str">f"→ Casting {func.__name__}..."</span>)
+        result = func(*args, **kwargs)
+        <span class="kw">print</span>(<span class="str">f"✓ {func.__name__} resolved: {result}"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+<span class="kw">@log_call</span>
+<span class="kw">def</span> <span class="fn">fireball</span>(target):
+    <span class="kw">return</span> <span class="str">f"{target} takes 60 fire damage"</span>
+
+<span class="fn">fireball</span>(<span class="str">"Goblin"</span>)`,
+  out:`→ Casting fireball...
+✓ fireball resolved: Goblin takes 60 fire damage`
+},
+{
+  id:"generators", cat:"Advanced Python", title:"Generators & yield", level:"advanced",
+  tags:["lazy evaluation","memory efficient"],
+  lead:"Generators produce values one at a time using 'yield', pausing between each — far more memory-efficient than building a full list upfront.",
+  scenario:"Infinite Enemy Wave Spawner — generate an endless stream of increasingly strong enemies without pre-building a giant list.",
+  key:[
+    "A function with 'yield' becomes a generator — calling it returns an iterator, not a result.",
+    "State is preserved between yields (loop counters, etc).",
+    "Great for streaming data, infinite sequences, and huge datasets that don't fit in memory."
+  ],
+  code:`<span class="kw">def</span> <span class="fn">enemy_wave_spawner</span>():
+    wave = 1
+    <span class="kw">while</span> <span class="kw">True</span>:
+        <span class="kw">yield</span> {<span class="str">"wave"</span>: wave, <span class="str">"hp"</span>: 50 + wave * 20}
+        wave += 1
+
+spawner = <span class="fn">enemy_wave_spawner</span>()
+
+<span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(4):
+    enemy = <span class="fn">next</span>(spawner)
+    <span class="kw">print</span>(<span class="str">f"Wave {enemy['wave']}: enemy HP = {enemy['hp']}"</span>)`,
+  out:`Wave 1: enemy HP = 70
+Wave 2: enemy HP = 90
+Wave 3: enemy HP = 110
+Wave 4: enemy HP = 130`
+},
+{
+  id:"iterators", cat:"Advanced Python", title:"Iterators & Iterables", level:"advanced",
+  tags:["__iter__","__next__","StopIteration"],
+  lead:"An iterable can be looped over; an iterator is the object that actually tracks progress via __next__(). for loops use both under the hood.",
+  scenario:"Turn Order Tracker — cycle through party members turn by turn in a custom, controllable way.",
+  key:[
+    "__iter__ returns the iterator object itself (usually self).",
+    "__next__ returns the next value or raises StopIteration when done.",
+    "Building your own iterator gives full control over how looping behaves."
+  ],
+  code:`<span class="kw">class</span> <span class="cls">TurnOrder</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, party):
+        self.party = party
+        self.index = 0
+
+    <span class="kw">def</span> <span class="fn">__iter__</span>(self):
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">__next__</span>(self):
+        <span class="kw">if</span> self.index >= <span class="fn">len</span>(self.party):
+            <span class="kw">raise</span> <span class="cls">StopIteration</span>
+        member = self.party[self.index]
+        self.index += 1
+        <span class="kw">return</span> member
+
+<span class="kw">for</span> fighter <span class="kw">in</span> <span class="cls">TurnOrder</span>([<span class="str">"Kai"</span>, <span class="str">"Mira"</span>, <span class="str">"Sora"</span>]):
+    <span class="kw">print</span>(<span class="str">f"{fighter}'s turn!"</span>)`,
+  out:`Kai's turn!
+Mira's turn!
+Sora's turn!`
+},
+{
+  id:"context", cat:"Advanced Python", title:"Context Managers (with)", level:"advanced",
+  tags:["__enter__","__exit__","contextlib"],
+  lead:"Context managers guarantee setup and cleanup code always run together — 'with' is the syntax that uses them.",
+  scenario:"Battle Arena Lock — automatically open and safely close an arena instance, even if the battle crashes midway.",
+  key:[
+    "__enter__ runs at the start of the 'with' block; __exit__ always runs at the end.",
+    "__exit__ runs even if an exception occurred inside the block.",
+    "contextlib.contextmanager can turn a generator function into a context manager quickly."
+  ],
+  code:`<span class="kw">class</span> <span class="cls">BattleArena</span>:
+    <span class="kw">def</span> <span class="fn">__enter__</span>(self):
+        <span class="kw">print</span>(<span class="str">"⚔️ Arena opened — battle starting!"</span>)
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">__exit__</span>(self, exc_type, exc_val, exc_tb):
+        <span class="kw">print</span>(<span class="str">"🔒 Arena closed — cleaning up battlefield."</span>)
+        <span class="kw">return</span> <span class="kw">False</span>  <span class="com"># don't suppress exceptions</span>
+
+<span class="kw">with</span> <span class="cls">BattleArena</span>() <span class="kw">as</span> arena:
+    <span class="kw">print</span>(<span class="str">"Fighting the boss..."</span>)`,
+  out:`⚔️ Arena opened — battle starting!
+Fighting the boss...
+🔒 Arena closed — cleaning up battlefield.`
+},
+{
+  id:"modules", cat:"Advanced Python", title:"Modules & Packages", level:"intermediate",
+  tags:["import","__init__.py"],
+  lead:"Modules (.py files) and packages (folders with __init__.py) let you organize code across multiple files and reuse it anywhere.",
+  scenario:"Game Project Structure — split a growing game codebase into combat.py, inventory.py, and a characters/ package.",
+  key:[
+    "import module_name, or from module_name import thing.",
+    "A package is just a folder containing an __init__.py (can be empty).",
+    "'if __name__ == \"__main__\":' guards code that should only run when the file is executed directly."
+  ],
+  code:`<span class="com"># combat.py</span>
+<span class="kw">def</span> <span class="fn">calculate_damage</span>(attack, defense):
+    <span class="kw">return</span> <span class="fn">max</span>(attack - defense, 1)
+
+<span class="com"># main.py</span>
+<span class="kw">from</span> combat <span class="kw">import</span> calculate_damage
+
+dmg = <span class="fn">calculate_damage</span>(60, 25)
+<span class="kw">print</span>(<span class="str">f"Damage dealt: {dmg}"</span>)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    <span class="kw">print</span>(<span class="str">"Running main.py directly"</span>)`,
+  out:`Damage dealt: 35
+Running main.py directly`
+},
+{
+  id:"unpack", cat:"Advanced Python", title:"Unpacking Operators (*, **)", level:"advanced",
+  tags:["star unpacking","merge dicts"],
+  lead:"The * and ** operators unpack sequences and mappings into individual arguments, or merge collections together.",
+  scenario:"Party Merge — combine two separate adventuring groups (and their gear dicts) into one unified roster before a raid.",
+  key:[
+    "*list unpacks a list/tuple into positional arguments or new list elements.",
+    "**dict unpacks a dict into keyword arguments or merges dict literals.",
+    "a, *rest = [1,2,3,4] captures the remainder flexibly."
+  ],
+  code:`squad_a = [<span class="str">"Kai"</span>, <span class="str">"Mira"</span>]
+squad_b = [<span class="str">"Sora"</span>, <span class="str">"Ren"</span>]
+full_roster = [*squad_a, *squad_b, <span class="str">"Late Joiner"</span>]
+
+gear_a = {<span class="str">"sword"</span>: 1, <span class="str">"shield"</span>: 1}
+gear_b = {<span class="str">"bow"</span>: 2}
+combined_gear = {**gear_a, **gear_b}
+
+leader, *rest = full_roster
+<span class="kw">print</span>(<span class="str">"Roster:"</span>, full_roster)
+<span class="kw">print</span>(<span class="str">"Gear:"</span>, combined_gear)
+<span class="kw">print</span>(<span class="str">f"Leader: {leader}, Others: {rest}"</span>)`,
+  out:`Roster: ['Kai', 'Mira', 'Sora', 'Ren', 'Late Joiner']
+Gear: {'sword': 1, 'shield': 1, 'bow': 2}
+Leader: Kai, Others: ['Mira', 'Sora', 'Ren', 'Late Joiner']`
+},
+{
+  id:"regex", cat:"Advanced Python", title:"Regular Expressions", level:"advanced",
+  tags:["re module","pattern matching"],
+  lead:"Regular expressions describe text patterns for searching, validating, and extracting data using compact special syntax.",
+  scenario:"Chat Command Parser — detect and extract in-game slash commands like '/whisper Aria hello there' from raw chat text.",
+  key:[
+    "re.match/re.search find patterns; re.findall returns all matches; re.sub replaces.",
+    "Groups () let you extract specific parts of a match.",
+    "Compile patterns with re.compile() if reused often, for a small performance gain."
+  ],
+  code:`<span class="kw">import</span> re
+
+chat_line = <span class="str">"/whisper Aria hello there, meet at the gate!"</span>
+pattern = re.compile(<span class="str">r"^/whisper (\\w+) (.+)$"</span>)
+
+match = pattern.match(chat_line)
+<span class="kw">if</span> match:
+    target, message = match.groups()
+    <span class="kw">print</span>(<span class="str">f"Whisper target: {target}"</span>)
+    <span class="kw">print</span>(<span class="str">f"Message: {message}"</span>)
+
+emails = re.findall(<span class="str">r"[\\w.]+@[\\w.]+"</span>, <span class="str">"contact: gm@guild.com or support@guild.com"</span>)
+<span class="kw">print</span>(<span class="str">"Found emails:"</span>, emails)`,
+  out:`Whisper target: Aria
+Message: hello there, meet at the gate!
+Found emails: ['gm@guild.com', 'support@guild.com']`
+},
+{
+  id:"threading", cat:"Advanced Python", title:"Multithreading Basics", level:"advanced",
+  tags:["threading module","concurrency","GIL"],
+  lead:"Threading lets multiple tasks run concurrently — useful for I/O-bound work like network calls, though Python's GIL limits true CPU parallelism.",
+  scenario:"Simultaneous NPC Dialogue Loading — fetch dialogue data for several NPCs from disk/network at the same time instead of one by one.",
+  key:[
+    "threading.Thread(target=fn, args=(...)) creates a new thread.",
+    ".start() begins it; .join() waits for it to finish.",
+    "The GIL means threading helps I/O-bound tasks far more than CPU-bound ones — use multiprocessing for heavy CPU work."
+  ],
+  code:`<span class="kw">import</span> threading, time
+
+<span class="kw">def</span> <span class="fn">load_npc_dialogue</span>(npc_name):
+    time.sleep(0.3)  <span class="com"># simulate I/O delay</span>
+    <span class="kw">print</span>(<span class="str">f"Loaded dialogue for {npc_name}"</span>)
+
+npcs = [<span class="str">"Blacksmith"</span>, <span class="str">"Innkeeper"</span>, <span class="str">"Mysterious Sage"</span>]
+threads = [threading.Thread(target=load_npc_dialogue, args=(n,)) <span class="kw">for</span> n <span class="kw">in</span> npcs]
+
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.start()
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.join()
+
+<span class="kw">print</span>(<span class="str">"All NPC dialogue ready!"</span>)`,
+  out:`Loaded dialogue for Blacksmith
+Loaded dialogue for Innkeeper
+Loaded dialogue for Mysterious Sage
+All NPC dialogue ready!`
+}
+];
+
+/* ============================ APP LOGIC ============================ */
+const state = { current: TOPICS[0].id, completed: new Set(), filter:"" };
+
+function levelChip(level){
+  const map = {beginner:["Beginner","beginner"], intermediate:["Intermediate","intermediate"], advanced:["Advanced","advanced"]};
+  const [label,cls] = map[level];
+  return `<span class="chip ${cls}">${label}</span>`;
+}
+function lvlDot(level){
+  return level==="beginner" ? "b" : level==="intermediate" ? "i" : "a";
+}
+
+function renderSidebar(){
+  const nav = document.getElementById("navList");
+  const q = state.filter.trim().toLowerCase();
+  let html = "";
+  CATS.forEach(cat=>{
+    const items = TOPICS.filter(t=>t.cat===cat && (
+      !q || t.title.toLowerCase().includes(q) || t.tags.join(" ").toLowerCase().includes(q)
+    ));
+    if(items.length===0) return;
+    html += `<div class="cat">${cat}</div>`;
+    items.forEach(t=>{
+      const active = t.id===state.current ? "active" : "";
+      const done = state.completed.has(t.id) ? "completed" : "";
+      html += `<button class="topic-btn ${active} ${done}" data-id="${t.id}">
+        <span class="lvl ${lvlDot(t.level)}"></span> ${t.title}
+        <span class="done">✓</span>
+      </button>`;
+    });
+  });
+  nav.innerHTML = html || `<div class="empty-hint" style="padding:10px">No topics match your search.</div>`;
+  nav.querySelectorAll(".topic-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ state.current = btn.dataset.id; render(); window.scrollTo({top:0, behavior:"smooth"}); });
+  });
+}
+
+function renderXP(){
+  const total = TOPICS.length;
+  const done = state.completed.size;
+  document.getElementById("xpLabel").textContent = `${done} / ${total} completed`;
+  document.getElementById("xpFill").style.width = `${(done/total*100).toFixed(0)}%`;
+}
+
+function neighbor(offset){
+  const idx = TOPICS.findIndex(t=>t.id===state.current);
+  const n = TOPICS[idx+offset];
+  return n || null;
+}
+
+function render(){
+  const t = TOPICS.find(x=>x.id===state.current);
+  document.getElementById("crumbs").innerHTML = `<b>${t.cat}</b> / ${t.title}`;
+
+  const prev = neighbor(-1), next = neighbor(1);
+  const isDone = state.completed.has(t.id);
+
+  document.getElementById("content").innerHTML = `
+    <div class="head">
+      <div>
+        <h1>${t.title}</h1>
+        ${levelChip(t.level)}
+      </div>
+      <label class="mark">
+        <input type="checkbox" id="doneCheck" ${isDone?"checked":""}/>
+        Mark as completed
+      </label>
+    </div>
+    <div class="tags">${t.tags.map(tag=>`<span class="tag">#${tag}</span>`).join("")}</div>
+    <p class="lead">${t.lead}</p>
+
+    <div class="card">
+      <h3><span class="ico">🎮</span> Real-world Example</h3>
+      <div class="scenario">${t.scenario}</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="ico">💡</span> Key Ideas</h3>
+      <ul class="keypoints">${t.key.map(k=>`<li>${k}</li>`).join("")}</ul>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3><span class="ico">🐍</span> Code</h3>
+        <pre class="code">${t.code}</pre>
+      </div>
+      <div class="card">
+        <h3><span class="ico">📤</span> Result</h3>
+        <div class="out">${t.out}</div>
+      </div>
+    </div>
+
+    <div class="footer-nav">
+      <button class="navbtn" id="prevBtn" ${prev?"":"disabled"}>← ${prev?prev.title:"Start"}</button>
+      <button class="navbtn primary" id="nextBtn" ${next?"":"disabled"}>${next?next.title:"Course complete 🎉"} →</button>
+    </div>
+  `;
+
+  document.getElementById("doneCheck").addEventListener("change", (e)=>{
+    if(e.target.checked) state.completed.add(t.id); else state.completed.delete(t.id);
+    renderXP(); renderSidebar();
+  });
+  const pb = document.getElementById("prevBtn");
+  const nb = document.getElementById("nextBtn");
+  if(prev) pb.addEventListener("click", ()=>{ state.current = prev.id; render(); window.scrollTo({top:0, behavior:"smooth"}); });
+  if(next) nb.addEventListener("click", ()=>{ state.current = next.id; render(); window.scrollTo({top:0, behavior:"smooth"}); });
+
+  renderSidebar();
+  renderXP();
+}
+
+document.getElementById("searchBox").addEventListener("input", (e)=>{
+  state.filter = e.target.value;
+  renderSidebar();
+});
+
+render();
+</script>
+</body>
+</html>
