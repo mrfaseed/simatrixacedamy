@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+<!-- nav bar text font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<!-- nav bar text font -->
+<title>CSE Symposium</title>
+    <style>
+        /* Existing styles... */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            user-select: none;
+            font-family: 'Arial', sans-serif;
+            transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 4em;
+            font-weight: bold;
+            color: #333;
+            font-family: Arvo;
+            transition: color 0.5s ease-in-out;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            font-size: 2.4em;
+            color: #000000;
+            margin-left: 30px;
+            font-family: Anonymous Pro;
+            transition: color 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+        .nav-links li a:hover{
+            color: #746e6e;
+        }
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background-color: #ff0000;
+            left: 0;
+            bottom: -5px;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links li a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: #3c00ff;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-active {
+                display: flex !important;
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* Toggle button */
+        .toggle-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1001; /* Ensures it's above the footer */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .toggle-switch {
+            display: none;
+        }
+
+        .toggle-label {
+            width: 60px;
+            height: 30px;
+            background-color: #333;
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3px;
+            box-sizing: border-box;
+        }
+
+        .toggle-circle {
+            width: 26px;
+            height: 26px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .toggle-switch:checked + .toggle-label {
+            background-color: #ffde59;
+        }
+
+        .toggle-switch:checked + .toggle-label .toggle-circle {
+            transform: translateX(30px);
+        }
+
+        /* Main content */
+        main {
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: Chakra Petch;
+            font-size: 4.3em;
+            margin-top: 90px;
+            margin-bottom: 20px;
+            opacity: 0;
+        }
+
+        p {
+            font-family: Chakra Petch;
+            font-size: 2em;
+            opacity: 0;
+        }
+
+      
+
+        /* Dark mode */
+        .dark-mode {
+            background-color: #121212;
+            color: #f0f0f0;
+        }
+
+        .dark-mode .logo,
+        .dark-mode .nav-links li a {
+            color: #f0f0f0;
+        }
+        .dark-mode .nav-links li a:hover {
+            color: #a3a094;
+        }
+     
+
+        .dark-mode .hamburger span {
+            background-color: #f0f0f0;
+        }
+        .dark-mode header {
+    background-color: rgba(0, 0, 0, 0.9); /* A dark color for the navbar */
+}
+        /* Star animation styles */
+        .star-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.star {
+    position: absolute;
+    width: 0; 
+    height: 0; 
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid rgb(247, 102, 102); /* Color of the star */
+    transform: rotate(35deg);
+    opacity: 0.8;
+    animation: fall linear infinite;
+}
+
+.star::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: -5px;
+    width: 0; 
+    height: 0; 
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid rgb(247, 102, 102); /* Color of the star */
+    transform: rotate(-70deg);
+}
+
+.star::after {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: -5px;
+    width: 0; 
+    height: 0; 
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid rgb(247, 102, 102); /* Color of the star */
+    transform: rotate(70deg);
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-100vh) rotate(35deg); /* Initial position */
+        opacity: 1; 
+    }
+    100% {
+        transform: translateY(100vh) rotate(35deg); /* Final position */
+        opacity: 0; 
+    }
+}
+.dark-mode .button-57 {
+    border: 1px solid #ffffff; /* Dark mode border color */
+}
+.button-57 {
+    position: fixed; /* Changed from relative to fixed */
+  bottom: 20px; /* 20px from the bottom */
+  right: 660px; 
+  overflow: hidden;
+  border-radius: 50px;
+  z-index: 1002;
+  border: 2px solid #000000;  /* note this is 278th line */
+  color: #18181a;
+  display: inline-block;
+  font-size: 23px;
+  line-height: 15px;
+  padding: 25px 32px 25px 32px;
+  text-decoration: none;
+  cursor: pointer;
+  background: #fff;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-57 span:first-child {
+  position: relative;
+  transition: color 600ms cubic-bezier(0.48, 0, 0.12, 1);
+  z-index: 10;
+}
+
+.button-57 span:last-child {
+  color: rgb(255, 255, 255);
+  display: block;
+  position: absolute;
+  bottom: 0;
+  transition: all 500ms cubic-bezier(0.48, 0, 0.12, 1);
+  z-index: 100;
+  opacity: 0;
+  top: 50%;
+  left: 50%;
+  transform: translateY(225%) translateX(-50%);
+  height: 14px;
+  line-height: 13px;
+}
+
+.button-57:after {
+  content: "";
+  position: absolute;
+  bottom: -50%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 0, 0);
+  transform-origin: bottom center;
+  transition: transform 600ms cubic-bezier(0.48, 0, 0.12, 1);
+  transform: skewY(9.3deg) scaleY(0);
+  z-index: 50;
+}
+
+.button-57:hover:after {
+  transform-origin: bottom center;
+  transform: skewY(9.3deg) scaleY(2);
+}
+
+.button-57:hover span:last-child {
+  transform: translateX(-50%) translateY(-100%);
+  opacity: 1;
+  transition: all 900ms cubic-bezier(0.48, 0, 0.12, 1);
+}
+/* Modal styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; 
+  z-index: 1003; /* Ensure it's above other elements */
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 90%; /* Responsive width */
+  position: relative;
+}
+
+.modal-content h2 {
+  margin-bottom: 15px;
+  font-size: 2em;
+  color: #18181a;
+}
+
+.modal-content label {
+  display: block;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1.1em;
+}
+
+.modal-content button {
+  width: 100%;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 2em;
+  cursor: pointer;
+  color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+
+    .button-57 {
+ /* Changed from relative to fixed */
+  bottom: 80px; /* 20px from the bottom */
+  right: 130px; 
+
+  padding: 14px 20px 17px;
+
+}
+  .modal-content {
+    width: 90%; /* Ensure it fits on small screens */
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="star-container"></div> <!-- Star container -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">TechFusion</div>
+            <ul class="nav-links">
+                <li><a href="#" target="_blank">Home</a></li>
+                <li><a href="events.html" target="_blank">Events</a></li>
+                <li><a href="about.html" target="_blank">About </a></li>
+                <li><a href="venue.html" target="_blank">Venue</a></li>
+                <li><a href="contact.html" target="_blank">Contact </a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home">
+            <h1>Welcome to the  TechFusion</h1>
+            <p>Discover exciting events, keynotes, and more!</p>
+        </section>
+    </main>
+    <button onclick="location.href='Login.html'" class="button-57" role="button"><span class="text">Login / signup → </span><span>Get in </span></button>
+
+    <!-- Toggle Switch -->
+     <abbr title="Dark / Light mode ">
+    <div class="toggle-container">
+        <input type="checkbox" id="darkModeToggle" class="toggle-switch">
+        <label for="darkModeToggle" class="toggle-label">
+            <span class="toggle-circle"></span>
+        </label>
+    </div>
+</abbr>
+  
+
+
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <script>
+        // Existing JavaScript...
+        document.addEventListener('DOMContentLoaded', () => {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const body = document.body;
+
+            // Dark mode toggle switch functionality
+            darkModeToggle.addEventListener('change', () => {
+                body.classList.toggle('dark-mode');
+
+                // Anime.js for smooth body color transitions
+                anime({
+                    targets: 'body',
+                    backgroundColor: body.classList.contains('dark-mode') ? '#121212' : '#ffffff',
+                    color: body.classList.contains('dark-mode') ? '#f0f0f0' : '#333',
+                    easing: 'easeInOutQuad',
+                    duration: 500
+                });
+            });
+
+            // Animate the nav items when the page loads
+            anime({
+                targets: '.nav-links li,.logo',
+                translateY: [-50, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                easing: 'easeInOutQuad',
+                duration: 800
+            });
+
+            // Toggle nav bar on mobile (hamburger menu)
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+
+            hamburger.addEventListener('click', () => {
+                navLinks.classList.toggle('nav-active');
+                anime({
+                    targets: '.nav-links li',
+                    translateY: [-50, 0],
+                    opacity: [0, 1],
+                    delay: anime.stagger(100),
+                    easing: 'easeInOutQuad',
+                    duration: 500
+                });
+            });
+
+            // Add fade-in animation to main content
+            anime({
+                targets: 'h1, p,button',
+                opacity: [0, 1],
+                translateY: [50, 0],
+                easing: 'easeInOutQuad',
+                duration: 800,
+                delay: anime.stagger(200)
+            });
+        });
+        // Star animation function
+        function createStar() {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.animationDuration = Math.random() * 5 + 5 + 's'; // Random duration between 5s and 10s
+
+            document.querySelector('.star-container').appendChild(star);
+            star.addEventListener('animationend', () => {
+                star.remove();
+            });
+        }
+
+        // Create stars at intervals
+      setInterval(createStar,500);
+    // JavaScript to open and close the modal
+document.addEventListener('DOMContentLoaded', () => {
+    const loginButton = document.querySelector('.button-57');
+    const modal = document.getElementById('loginModal');
+    const closeModal = document.querySelector('.close');
+
+    // Open the modal when the login button is clicked
+    loginButton.addEventListener('click', (event) => {
+        event.preventDefault();
+      //  modal.style.display = 'flex';
+    });
+
+
+
+    // Close the modal if the user clicks outside the modal content
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+
+    </script>
+</body>
+</html>

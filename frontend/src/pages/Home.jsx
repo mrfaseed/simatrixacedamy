@@ -251,6 +251,95 @@ function HeroSlide({ slide, active, onScrollToEnquiry, onOpenForm, onNaturalSize
 }
 
 // ─────────────────────────────────────────────────────────────────
+// NEW DARK HERO SECTION (Replaces Carousel)
+// ─────────────────────────────────────────────────────────────────
+function DarkHeroSection({ onScrollToEnquiry, onOpenForm }) {
+  return (
+    <div className="relative w-full overflow-hidden bg-[#040B16] pt-[140px] lg:pt-[180px]" style={{ minHeight: "100vh" }}>
+      
+      {/* Container */}
+      <div className="relative z-10 mx-auto max-w-[1400px] px-6 lg:px-16 h-full flex flex-col lg:flex-row items-center justify-between">
+        
+        {/* Left Side: Typography */}
+        <div className="w-full lg:w-[55%] z-20 pb-16 lg:pb-32">
+          <h1 className="text-5xl font-bold tracking-tight text-white sm:text-6xl lg:text-[76px] lg:leading-[1.15]">
+            LEARN TODAY.<br />
+            <span className="bg-gradient-to-r from-[#4DE1C1] to-[#3B82F6] bg-clip-text text-transparent">LEAD</span> TOMORROW.
+          </h1>
+          <p className="mt-8 text-lg leading-relaxed text-slate-300 max-w-xl">
+            Industry-oriented training in IT & Emerging Technologies<br className="hidden lg:block"/>
+            with practical learning and placement assistance.
+          </p>
+          <div className="mt-12 flex flex-wrap items-center gap-5">
+            <button
+              onClick={() => onOpenForm("career-guidance")}
+              className="rounded-xl bg-[#0D6EFD] px-8 py-3.5 text-[15px] font-semibold text-white transition-all hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            >
+              Explore Programs
+            </button>
+            <button
+              onClick={onScrollToEnquiry}
+              className="group flex items-center gap-2 rounded-xl border border-slate-500/50 px-8 py-3.5 text-[15px] font-semibold text-white transition-all hover:border-slate-400 hover:bg-white/5"
+            >
+              Talk to Advisor <i className="ti ti-arrow-right text-[17px] opacity-80 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
+        </div>
+
+        {/* Right Side: Infinite Image Carousel */}
+        <div className="relative w-full lg:w-[45%] h-[500px] lg:h-[750px] flex items-center justify-center z-10 overflow-hidden">
+          
+          <style>{`
+            @keyframes verticalInfiniteScroll {
+              0% { transform: translateY(0); }
+              100% { transform: translateY(-50%); }
+            }
+            .animate-vertical-scroll {
+              animation: verticalInfiniteScroll 30s linear infinite;
+            }
+            .animate-vertical-scroll:hover {
+              animation-play-state: paused;
+            }
+          `}</style>
+
+          {/* Top/Bottom Fading Mask to blend into background */}
+          <div className="absolute inset-0 z-20 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #040B16 0%, transparent 15%, transparent 85%, #040B16 100%)' }} />
+
+          {/* Scrolling Track (Rendered twice for perfect loop) */}
+          <div className="flex flex-col gap-6 animate-vertical-scroll items-center w-full">
+            {/* If HERO_SLIDES is small, we duplicate it a few times to ensure it fills the vertical space */}
+            {[...HERO_SLIDES, ...HERO_SLIDES, ...HERO_SLIDES, ...HERO_SLIDES].map((slide, i) => (
+              <div 
+                key={`${slide.key || i}-${i}`} 
+                className="relative w-[90%] lg:w-[520px] rounded-[24px] overflow-hidden shadow-2xl border border-white/10 group cursor-pointer bg-[#040B16]"
+                onClick={() => onOpenForm(slide.visibleCta?.program || "career-guidance")}
+              >
+                <img 
+                  src={slide.src} 
+                  alt={slide.alt || "Academy Slide"} 
+                  className="w-full h-auto block transition-transform duration-700 group-hover:scale-105" 
+                />
+                
+                {/* Modern Hover Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#040B16]/95 via-[#040B16]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                  <div>
+                    <h4 className="text-white font-bold text-lg drop-shadow-md">
+                      {slide.visibleCta ? slide.visibleCta.label : "Explore"}
+                    </h4>
+                    <p className="text-cyan-400 text-sm font-medium mt-1">Click to learn more</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
 // HERO CAROUSEL (LOGIC INTACT, UI REFINED)
 // ─────────────────────────────────────────────────────────────────
 function HeroCarousel({ onScrollToEnquiry, onOpenForm }) {
@@ -1030,8 +1119,8 @@ export default function Home() {
         }
       `}</style>
 
-      {/* Hero Carousel */}
-      <HeroCarousel onScrollToEnquiry={scrollToEnquiry} onOpenForm={openProgramForm} />
+      {/* Dark Hero Section (Replaces Carousel) */}
+      <DarkHeroSection onScrollToEnquiry={scrollToEnquiry} onOpenForm={openProgramForm} />
 
       {activeProgram && createPortal(<ProgramApplyModal program={activeProgram} onClose={closeProgramForm} />, document.body)}
 

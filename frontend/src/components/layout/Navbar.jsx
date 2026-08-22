@@ -1,83 +1,33 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { api } from "../../api/client";
-import { icon } from "../../lib/icons";
-import { Button } from "../ui";
-
-/**
- * Palette pulled directly from simatrix_logo_only.png:
- *   --logo-blue    #1E8FE0  (left cap)
- *   --logo-indigo  #241C6B  (the crossover, darkest point)
- *   --logo-violet  #000000  (right cap)
- *   --logo-magenta #C026D3  (the dissolving pixels)
- * These replace the old generic brand-400/600/700 scale in this file so the
- * navbar reads as an extension of the mark, not a separate design system.
- */
+import { Search, MessageCircle, Mail, Sun, Moon, Monitor, ChevronDown, Menu, X as CloseIcon } from "lucide-react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 const ABOUT_LINKS = [
-  { label: "Academy Overview", to: "/about", icon: "ti-building-community" },
-  { label: "Mission & Vision", to: "/about/mission", icon: "ti-target" },
-  { label: "Our Pillars", to: "/about/pillars", icon: "ti-columns" },
-  { label: "Awards", to: "/awards", icon: "ti-award" },
-  { label: "Gallery", to: "/gallery", icon: "ti-photo" },
+  { label: "Academy Overview", to: "/about" },
+  { label: "Mission & Vision", to: "/about/mission" },
+  { label: "Our Pillars", to: "/about/pillars" },
+  { label: "Awards", to: "/awards" },
+  { label: "Gallery", to: "/gallery" },
 ];
 
 const SUPPORT_LINKS = [
-  { label: "Placement Training", to: "/placement", icon: "ti-briefcase" },
-  { label: "Career Guidance", to: "/career-guidance", icon: "ti-compass" },
-  { label: "Book Appointment", to: "/appointment", icon: "ti-calendar-event" },
-  { label: "Help Center", to: "/help-center", icon: "ti-help-circle" },
-  { label: "Blog", to: "/blog", icon: "ti-news" },
-  { label: "Student Reviews", to: "/reviews", icon: "ti-star" },
-  { label: "Interview Resources", to: "/interview-resources", icon: "ti-file-text" },
+  { label: "Placement Training", to: "/placement" },
+  { label: "Career Guidance", to: "/career-guidance" },
+  { label: "Book Appointment", to: "/appointment" },
+  { label: "Help Center", to: "/help-center" },
+  { label: "Blog", to: "/blog" },
+  { label: "Student Reviews", to: "/reviews" },
+  { label: "Interview Resources", to: "/interview-resources" },
 ];
-
-// The logo dissolves into these squares as it exits right. Reuse that exact
-// idea as a hover/active "trail" under nav items instead of a plain bar.
-function PixelTrail({ active }) {
-  return (
-    <span
-      aria-hidden
-      className={`pointer-events-none absolute -bottom-1 left-1/2 flex -translate-x-1/2 gap-[3px] transition-all duration-300 ${
-        active ? "opacity-100" : "opacity-0 group-hover:opacity-70"
-      }`}
-    >
-      {[0, 1, 2, 3].map((i) => (
-        <span
-          key={i}
-          className="block h-[3px] w-[3px] rounded-[1px]"
-          style={{
-            background:
-              i === 0
-                ? "#1E8FE0"
-                : i === 1
-                ? "#4A2E9E"
-                : i === 2
-                ? "#7B2FCB"
-                : "#C026D3",
-            transform: active ? "translateY(0)" : `translateY(${i % 2 === 0 ? -1 : 1}px)`,
-          }}
-        />
-      ))}
-    </span>
-  );
-}
 
 export default function Navbar() {
   const { pathname, search } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [openMenu, setOpenMenu] = useState(null);
-  const [categories, setCategories] = useState([]);
   const [scrolled, setScrolled] = useState(false);
-  const navRef = useRef(null);
-
-  useEffect(() => {
-    api.getSite().then((res) => setCategories(res.data.categories)).catch(() => {});
-  }, []);
 
   useEffect(() => {
     setMobileOpen(false);
-    setOpenMenu(null);
   }, [pathname, search]);
 
   useEffect(() => {
@@ -88,309 +38,201 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   useEffect(() => {
-    const onKeyDown = (event) => {
-      if (event.key !== "Escape") return;
-      setMobileOpen(false);
-      setOpenMenu(null);
-    };
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, []);
-
-  useEffect(() => {
-    const onClick = (e) => {
-      if (navRef.current && !navRef.current.contains(e.target)) setOpenMenu(null);
-    };
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
-  }, []);
-
-  useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const toggle = (name) => setOpenMenu((m) => (m === name ? null : name));
-
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/95 shadow-[0_8px_30px_-12px_rgba(36,28,107,0.18)] backdrop-blur"
-          : "bg-white/80 backdrop-blur"
-      }`}
-    >
-      {/* hairline that carries the exact logo gradient, not a generic brand tint */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, #1E8FE0 20%, #241C6B 50%, #7B2FCB 80%, transparent)",
-        }}
-      />
-
-      <div
-        ref={navRef}
-        className="relative mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6"
-      >
-        <Link to="/" className="group flex items-center gap-2.5">
-          {/* logo carries its own gradient — no boxed background fighting it */}
-          <img
-            src="/simatrix_logo_only.svg"
-            alt="Simatrix Academy Logo"
-            className="h-9 w-auto transition-transform duration-300 group-hover:scale-105"
-          />
-          <span className="font-display text-lg font-extrabold tracking-tight">
-            <span
-              className="bg-clip-text text-transparent"
-              style={{
-                backgroundImage:
-                  "linear-gradient(90deg, #000000 0%, #241C6B 55%, #000000 100%)",
-              }}
-            >
-              Simatrix Academy
-            </span>
-          </span>
-        </Link>
-
-        <nav className="hidden items-center gap-1 lg:flex">
-          <TopLink to="/" label="Home" />
-
-          <Dropdown label="About" open={openMenu === "about"} onToggle={() => toggle("about")}>
-            <div className="w-64 p-2">
-              {ABOUT_LINKS.map((l) => (
-                <MenuItem key={l.to} {...l} onClick={() => setOpenMenu(null)} />
-              ))}
-            </div>
-          </Dropdown>
-
-          <Dropdown label="Courses" wide open={openMenu === "courses"} onToggle={() => toggle("courses")}>
-            <div className="grid w-[34rem] grid-cols-2 gap-1 p-3">
-              {categories.map((c) => (
-                <Link
-                  key={c.id}
-                  to={`/courses?category=${c.slug}`}
-                  onClick={() => setOpenMenu(null)}
-                  className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-600 transition-colors hover:bg-[#1E8FE0]/5 hover:text-[#4A2E9E]"
-                >
-                  <span
-                    className="grid h-8 w-8 place-items-center rounded-lg text-white ring-1 ring-black/5 transition-transform group-hover:scale-105"
-                    style={{ background: "linear-gradient(135deg, #1E8FE0, #7B2FCB)" }}
-                  >
-                    <i className={icon(c.icon)} />
-                  </span>
-                  <span>
-                    {c.name}
-                    <span className="block text-xs text-slate-500">{(c.courses || []).length} courses</span>
-                  </span>
-                </Link>
-              ))}
-              <Link
-                to="/courses"
-                onClick={() => setOpenMenu(null)}
-                className="col-span-2 mt-1 flex items-center justify-center gap-1 rounded-lg px-3 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-110"
-                style={{ background: "linear-gradient(90deg, #1E8FE0, #241C6B, #7B2FCB)" }}
-              >
-                View all courses <i className="ti ti-arrow-right" />
-              </Link>
-            </div>
-          </Dropdown>
-
-          <Dropdown label="Support" open={openMenu === "support"} onToggle={() => toggle("support")}>
-            <div className="w-64 p-2">
-              {SUPPORT_LINKS.map((l) => (
-                <MenuItem key={l.to} {...l} onClick={() => setOpenMenu(null)} />
-              ))}
-            </div>
-          </Dropdown>
-          {/*  <TopLink to="/branches" label="Branches" />*/}
-
-          <TopLink to="/contact" label="Contact" />
-        </nav>
-
-        <div className="hidden items-center gap-3 lg:flex">
-         
-          <Button
-            as={Link}
-            to="/contact"
-            size="sm"
-            className="!border-0 !text-white"
-            style={{ background: "linear-gradient(90deg, #1E8FE0, #241C6B, #7B2FCB)" }}
-          >
-            Enquire Now
-          </Button>
-        </div>
-
-        <button
-          className="grid h-11 w-11 place-items-center rounded-lg text-slate-700 transition-colors hover:bg-slate-100 lg:hidden"
-          onClick={() => setMobileOpen((o) => !o)}
-          aria-label="Toggle menu"
-          aria-expanded={mobileOpen}
-          aria-controls="mobile-navigation"
+    <>
+      {/* Floating Pill Container */}
+      <div className="fixed top-4 left-1/2 z-50 w-full max-w-6xl -translate-x-1/2 px-4 sm:px-6">
+        <header
+          className={`flex h-[56px] items-center justify-between rounded-full border border-black/5 bg-white/90 px-3 shadow-sm backdrop-blur-md transition-all duration-300 ${
+            scrolled ? "bg-white/95 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.18)]" : ""
+          }`}
         >
-          <i className={`ti text-xl ${mobileOpen ? "ti-x" : "ti-menu-2"}`} />
-        </button>
+          
+          {/* Left Section: Brand */}
+          <div className="flex w-[190px] shrink-0 items-center justify-center pl-2">
+            <Link to="/" className="flex items-center justify-center">
+              {/* Nudged up 3px visually to compensate for image padding/visual weight */}
+              <img src="/MASTER SDS .png" alt="Simatrix Logo" className="h-auto w-[190px] shrink-0 -translate-y-[6px] object-contain" />
+            </Link>
+          </div>
+
+          {/* Middle Section: Navigation Links (Desktop) */}
+          <nav className="hidden items-center gap-1 lg:flex">
+            <TopLink to="/" label="Home" />
+            <NavHoverMenu label="About" links={ABOUT_LINKS} />
+            <TopLink to="/courses" label="Courses" />
+            <NavHoverMenu label="Support" links={SUPPORT_LINKS} />
+            <TopLink to="/contact" label="Contact" />
+          </nav>
+
+          {/* Right Section: Utility & Actions */}
+          <div className="flex items-center gap-2">
+            
+            {/* Quick Search (Always visible) */}
+            <button className="hidden h-9 w-[180px] items-center justify-between gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 text-sm text-slate-400 transition-colors hover:bg-slate-100 lg:flex">
+              <div className="flex shrink-0 items-center gap-2">
+                <Search className="h-[14px] w-[14px]" />
+                <span className="whitespace-nowrap text-[13px]">
+                  Quick search...
+                </span>
+              </div>
+              <kbd className="flex h-[18px] shrink-0 items-center justify-center rounded border border-slate-200 bg-white px-[5px] text-[10px] font-medium text-slate-500 shadow-sm">
+                ⌘K
+              </kbd>
+            </button>
+
+            {/* Divider */}
+            <div className="mx-2 hidden h-4 w-[1px] bg-slate-200 sm:block" />
+
+            {/* Action Icons & Theme Toggle */}
+            <div className="hidden items-center gap-1.5 sm:flex">
+              {/* WhatsApp */}
+              <SocialBtn icon={<MessageCircle className="h-4 w-4" />} />
+              {/* Email */}
+              <SocialBtn icon={<Mail className="h-4 w-4" />} />
+              {/* Theme Toggle Menu */}
+              <ThemeToggle />
+            </div>
+
+            {/* Mobile Toggle */}
+            <button
+              className="grid h-9 w-9 place-items-center rounded-full border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-100 lg:hidden"
+              onClick={() => setMobileOpen((o) => !o)}
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+          </div>
+        </header>
       </div>
 
+      {/* Mobile Menu */}
       {mobileOpen && (
-        <MobileMenu categories={categories} onClose={() => setMobileOpen(false)} />
+        <div className="fixed inset-0 z-[100] flex flex-col bg-white p-4 lg:hidden">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <img src="/MASTER SDS .png" alt="Simatrix Logo" className="h-8 w-auto object-contain" />
+            </div>
+            <button
+              className="grid h-10 w-10 place-items-center rounded-full bg-slate-100 text-slate-700"
+              onClick={() => setMobileOpen(false)}
+            >
+              <CloseIcon className="h-5 w-5" />
+            </button>
+          </div>
+          
+          <nav className="mt-8 flex flex-col gap-4 text-lg font-medium text-slate-800">
+            <NavLink to="/" onClick={() => setMobileOpen(false)}>Home</NavLink>
+            <div className="h-px bg-slate-100" />
+            <span className="text-sm font-semibold text-slate-400">About</span>
+            <div className="flex flex-col gap-3 pl-4 text-base text-slate-600">
+              {ABOUT_LINKS.map((l) => (
+                <NavLink key={l.to} to={l.to} onClick={() => setMobileOpen(false)}>{l.label}</NavLink>
+              ))}
+            </div>
+            <div className="h-px bg-slate-100" />
+             <NavLink to="/courses" onClick={() => setMobileOpen(false)}>Courses</NavLink>
+            <div className="h-px bg-slate-100" />
+             <span className="text-sm font-semibold text-slate-400">Support</span>
+            <div className="flex flex-col gap-3 pl-4 text-base text-slate-600">
+              {SUPPORT_LINKS.map((l) => (
+                <NavLink key={l.to} to={l.to} onClick={() => setMobileOpen(false)}>{l.label}</NavLink>
+              ))}
+            </div>
+            <div className="h-px bg-slate-100" />
+            <NavLink to="/contact" onClick={() => setMobileOpen(false)}>Contact</NavLink>
+          </nav>
+        </div>
       )}
-    </header>
+    </>
   );
 }
+
+/* Sub-components */
 
 function TopLink({ to, label }) {
   return (
     <NavLink
       to={to}
-      end={to === "/"}
       className={({ isActive }) =>
-        `group relative rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-          isActive ? "text-[#4A2E9E]" : "text-slate-600 hover:text-[#4A2E9E]"
+        `rounded-full px-3.5 py-1.5 text-[14px] font-medium transition-colors ${
+          isActive ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
         }`
       }
     >
-      {({ isActive }) => (
-        <>
-          {label}
-          <PixelTrail active={isActive} />
-        </>
-      )}
+      {label}
     </NavLink>
   );
 }
 
-function Dropdown({ label, open, onToggle, children }) {
+function NavHoverMenu({ label, links }) {
   return (
-    <div className="relative">
-      <button
-        onClick={onToggle}
-        aria-expanded={open}
-        aria-haspopup="menu"
-        className={`group relative flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-          open ? "text-[#4A2E9E]" : "text-slate-600 hover:text-[#4A2E9E]"
-        }`}
-      >
+    <div className="group relative">
+      <button className="flex items-center gap-1 rounded-full px-3.5 py-1.5 text-[14px] font-medium text-slate-600 outline-none transition-colors group-hover:bg-slate-50 group-hover:text-slate-900">
         {label}
-        <i className={`ti ti-chevron-down text-xs transition ${open ? "rotate-180" : ""}`} />
-        <PixelTrail active={open} />
+        <ChevronDown className="h-3.5 w-3.5 opacity-50 transition-transform duration-200 group-hover:rotate-180" />
       </button>
-      {open && (
-        <div className="absolute left-0 top-full mt-2 overflow-hidden rounded-2xl bg-white shadow-2xl shadow-[#241C6B]/10 ring-1 ring-slate-900/5 animate-[fadeIn_.15s_ease-out]">
-          <div className="h-1" style={{ background: "linear-gradient(90deg, #1E8FE0, #241C6B, #7B2FCB, #C026D3)" }} />
-          {children}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function MenuItem({ to, label, icon: ic, onClick }) {
-  return (
-    <Link
-      to={to}
-      onClick={onClick}
-      className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-600 transition-colors hover:bg-[#1E8FE0]/5 hover:text-[#4A2E9E]"
-    >
-      <span
-        className="grid h-7 w-7 place-items-center rounded-md text-[#4A2E9E] ring-1 ring-[#1E8FE0]/15 transition-colors group-hover:text-white"
-        style={{ background: "linear-gradient(135deg, rgba(30,143,224,0.12), rgba(123,47,203,0.12))" }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = "linear-gradient(135deg, #1E8FE0, #7B2FCB)")}
-        onMouseLeave={(e) =>
-          (e.currentTarget.style.background = "linear-gradient(135deg, rgba(30,143,224,0.12), rgba(123,47,203,0.12))")
-        }
-      >
-        <i className={`ti ${ic} text-base`} />
-      </span>
-      {label}
-    </Link>
-  );
-}
-
-function MobileMenu({ categories, onClose }) {
-  const [section, setSection] = useState(null);
-  const toggle = (s) => setSection((x) => (x === s ? null : s));
-
-  return (
-    <div id="mobile-navigation" className="relative max-h-[calc(100dvh-4rem)] overscroll-contain overflow-y-auto bg-white lg:hidden">
-      <div
-        className="h-px"
-        style={{ background: "linear-gradient(90deg, transparent, #1E8FE0, #7B2FCB, transparent)" }}
-      />
-      <nav className="flex flex-col px-4 py-3">
-        <MLink to="/" label="Home" onClose={onClose} />
-
-        <MGroup label="About" open={section === "about"} onToggle={() => toggle("about")}>
-          {ABOUT_LINKS.map((l) => <MLink key={l.to} {...l} sub onClose={onClose} />)}
-        </MGroup>
-
-        <MGroup label="Courses" open={section === "courses"} onToggle={() => toggle("courses")}>
-          {categories.map((c) => (
-            <MLink key={c.id} to={`/courses?category=${c.slug}`} label={c.name} sub onClose={onClose} />
+      
+      {/* Invisible hover bridge to prevent menu from closing when moving mouse down */}
+      <div className="absolute left-0 top-full h-3 w-full" />
+      
+      {/* Dropdown Content */}
+      <div className="pointer-events-none absolute left-0 top-[calc(100%+8px)] z-[100] min-w-[200px] origin-top-left -translate-y-2 scale-95 opacity-0 shadow-xl transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100">
+        <div className="overflow-hidden rounded-2xl border border-black/5 bg-white p-1.5">
+          {links.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="block cursor-pointer rounded-xl px-3 py-2 text-[14px] font-medium text-slate-600 outline-none transition-colors hover:bg-slate-50 hover:text-slate-900"
+            >
+              {link.label}
+            </Link>
           ))}
-          <MLink to="/courses" label="View all courses" sub onClose={onClose} />
-        </MGroup>
-
-        <MGroup label="Support" open={section === "support"} onToggle={() => toggle("support")}>
-          {SUPPORT_LINKS.map((l) => <MLink key={l.to} {...l} sub onClose={onClose} />)}
-        </MGroup>
-
-        <MLink to="/branches" label="Branches" onClose={onClose} />
-        <MLink to="/contact" label="Contact" onClose={onClose} />
-        <Button
-          as={Link}
-          to="/contact"
-          className="mt-3 !border-0 !text-white"
-          style={{ background: "linear-gradient(90deg, #1E8FE0, #241C6B, #7B2FCB)" }}
-          onClick={onClose}
-        >
-          Enquire Now
-        </Button>
-      </nav>
-    </div>
-  );
-}
-
-function MGroup({ label, open, onToggle, children }) {
-  return (
-    <div>
-      <button
-        onClick={onToggle}
-        aria-expanded={open}
-        className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-      >
-        {label}
-        <i className={`ti ti-chevron-down text-xs transition ${open ? "rotate-180" : ""}`} />
-      </button>
-      {open && (
-        <div className="ml-3 border-l-2 pl-2" style={{ borderColor: "rgba(30,143,224,0.25)" }}>
-          {children}
         </div>
-      )}
+      </div>
     </div>
   );
 }
 
-function MLink({ to, label, sub, onClose }) {
+function SocialBtn({ icon }) {
   return (
-    <NavLink
-      to={to}
-      end={to === "/"}
-      onClick={onClose}
-      className={({ isActive }) =>
-        `block rounded-lg px-3 py-2.5 ${sub ? "text-sm" : "text-sm font-medium"} ${
-          isActive ? "text-[#4A2E9E]" : "text-slate-700 hover:bg-slate-50"
-        }`
-      }
-      style={({ isActive }) =>
-        isActive
-          ? { background: "linear-gradient(90deg, rgba(30,143,224,0.08), transparent)" }
-          : undefined
-      }
-    >
-      {label}
-    </NavLink>
+    <button className="grid h-8 w-8 place-items-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900">
+      {icon}
+    </button>
+  );
+}
+
+function ThemeToggle() {
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button className="grid h-8 w-8 place-items-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 outline-none">
+          <Sun className="h-4 w-4" />
+        </button>
+      </DropdownMenu.Trigger>
+      
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          sideOffset={12}
+          align="end"
+          className="z-[100] min-w-[140px] overflow-hidden rounded-xl border border-black/5 bg-white p-1.5 shadow-xl animate-in fade-in zoom-in-95"
+        >
+          <DropdownMenu.Item className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] font-medium text-slate-600 outline-none transition-colors hover:bg-slate-50 hover:text-slate-900 data-[highlighted]:bg-slate-50 data-[highlighted]:text-slate-900">
+            <Sun className="h-4 w-4" /> Light Mode
+          </DropdownMenu.Item>
+          <DropdownMenu.Item className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] font-medium text-slate-600 outline-none transition-colors hover:bg-slate-50 hover:text-slate-900 data-[highlighted]:bg-slate-50 data-[highlighted]:text-slate-900">
+            <Moon className="h-4 w-4" /> Dark Mode
+          </DropdownMenu.Item>
+          <DropdownMenu.Item className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] font-medium text-slate-600 outline-none transition-colors hover:bg-slate-50 hover:text-slate-900 data-[highlighted]:bg-slate-50 data-[highlighted]:text-slate-900">
+            <Monitor className="h-4 w-4" /> System
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }
